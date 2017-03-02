@@ -1,0 +1,27 @@
+{
+  "name": "expect-enzyme",
+  "version": "0.1.0",
+  "description": "Enzyme assertions for mjackson's Expect library",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PsychoLlama/expect-enzyme/"
+  },
+  "keywords": [
+    "expect",
+    "assert",
+    "test",
+    "spec",
+    "enzyme",
+    "jsx",
+    "react"
+  ],
+  "license": "MIT",
+  "author": "Jesse Gibson",
+  "dependencies": {
+    "expect": "^1.20.2"
+  }
+}

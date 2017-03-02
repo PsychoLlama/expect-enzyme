@@ -2,11 +2,12 @@
   "name": "expect-enzyme",
   "version": "0.1.0",
   "description": "Enzyme assertions for mjackson's Expect library",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "mocha --opts ./mocha.opts 'src/**/*test.js'",
     "lint": "eslint src/",
-    "build": "babel src/ -d dist/"
+    "build": "babel src/ -d dist/",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

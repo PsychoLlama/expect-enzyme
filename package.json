@@ -4,7 +4,7 @@
   "description": "Enzyme assertions for mjackson's Expect library",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --opts ./mocha.opts 'src/**/*test.js'",
     "build": "babel src/ -d dist/"
   },
   "repository": {
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
-    "babel-preset-es2015": "^6.22.0"
+    "babel-preset-es2015": "^6.22.0",
+    "mocha": "^3.2.0"
   }
 }

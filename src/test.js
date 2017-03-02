@@ -80,4 +80,42 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toHaveProp"', () => {
+    const createAssertion = (prop, val) => () => {
+      expect(element).toHaveProp(prop, val);
+    };
+
+    it('throws if the component is missing the prop', () => {
+      const assertion = createAssertion('weird prop');
+
+      expect(assertion).toThrow(/Expected div to have prop/i);
+    });
+
+    it('does not throw if the prop exists', () => {
+      const assertion = createAssertion('attr');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the value does not match', () => {
+      const assertion = createAssertion('attr', 'different value');
+
+      expect(assertion).toThrow(/property "attr"/i);
+    });
+
+    it('returns the expectation context', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveProp('attr');
+
+      expect(result).toBe(expectation);
+    });
+
+    it('throws if actual is not an enzyme wrapper', () => {
+      const assertion = () => expect(5).toHaveProp('stuff');
+
+      expect(assertion).toThrow(/enzyme wrapper/i);
+    });
+
+  });
+
 });

@@ -4,9 +4,9 @@ import React from 'react';
 
 import expect from 'expect';
 
-import expectEnzyme from './index';
+import assertions from './index';
 
-expect.extend(expectEnzyme);
+expect.extend(assertions);
 
 
 describe('expect-enzyme', () => {
@@ -22,6 +22,7 @@ describe('expect-enzyme', () => {
 
   it('adds enzyme assertion methods', () => {
     expect(expect().toHaveProps).toBeA(Function);
+    expect(expect().toHaveProp).toBeA(Function);
   });
 
   describe('method "toHaveProps"', () => {
@@ -114,6 +115,59 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(5).toHaveProp('stuff');
 
       expect(assertion).toThrow(/enzyme wrapper/i);
+    });
+
+  });
+
+  describe('method "toBeA"', () => {
+    const createElement = (type) => shallow(React.createElement(type));
+    const Child = () => <div>Nested component</div>;
+    const Composite = () => <div><Child /></div>;
+    const element = createElement(Composite);
+
+    it('passes control if actual is not an enzyme wrapper', () => {
+      expect(() => expect(5).toBeA('string')).toThrow();
+      expect(() => expect('hello world').toBeA(Function)).toThrow();
+      expect(() => expect(Symbol('weirder case')).toBeA('number')).toThrow();
+
+      expect(() => expect(10).toBeA('number')).toNotThrow();
+      expect(() => expect('hello world').toBeA('string')).toNotThrow();
+      expect(() => expect(() => {}).toBeA(Function)).toNotThrow();
+    });
+
+    it('asserts the type when actual is a wrapper', () => {
+      let assertion;
+
+      assertion = () => expect(createElement('div')).toBeA('div');
+      expect(assertion).toNotThrow();
+
+      assertion = () => expect(createElement('ul')).toBeA('li');
+      expect(assertion).toThrow(/Expected ul to be a li/i);
+    });
+
+    it('returns the expectation', () => {
+      const expectation = expect(createElement('div'));
+      const result = expectation.toBeA('div');
+
+      expect(result).toBe(expectation);
+    });
+
+    it('throws if the component selector does not match', () => {
+      const child = element.find('Child');
+
+      expect(() => expect(child).toBeA('Potato')).toThrow(/Child/i);
+      expect(() => expect(child).toBeA(Composite)).toThrow(/Child/i);
+    });
+
+    it('does not throw if the component selector matches', () => {
+      const child = element.find('Child');
+
+      const assertion = () => {
+        expect(child).toBeA(Child);
+        expect(child).toBeA('Child');
+      };
+
+      expect(assertion).toNotThrow();
     });
 
   });

@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.3.0
+### Added
+- Support for `.toBeAn(type)` method. Slightly changes error messages for grammatical accuracy.
+
 ## v0.2.0
 ### Added
 - Support for `.toBeA(type)` method.

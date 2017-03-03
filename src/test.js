@@ -172,4 +172,40 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toBeAn"', () => {
+    const element = shallow(<aside />);
+
+    it('throws the correct grammar article form', () => {
+      const element = shallow(<section />);
+      const assertion = () => expect(element).toBeAn('aside');
+
+      expect(assertion).toThrow(/an/);
+    });
+
+    it('passes through if actual is not an enzyme wrapper', () => {
+      // I just needed something that worked with the "an" article.
+      const error = new Error();
+
+      expect(() => expect([]).toBeAn(Array)).toNotThrow();
+      expect(() => expect(error).toBeAn(Error)).toNotThrow();
+
+      expect(() => expect([]).toBeAn(Error)).toThrow();
+      expect(() => expect(error).toBeAn(Array)).toThrow();
+    });
+
+    it('does not throw if the type matches', () => {
+      const assertion = () => expect(element).toBeAn('aside');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('returns the correct context', () => {
+      const expectation = expect(element);
+      const result = expectation.toBeAn('aside');
+
+      expect(result).toBe(expectation);
+    });
+
+  });
+
 });

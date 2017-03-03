@@ -23,6 +23,7 @@ const assertIsEnzymeWrapper = (actual) => expect.assert(
 const asserted = expect();
 
 const original = {
+  toBeAn: asserted.toBeAn,
   toBeA: asserted.toBeA,
 };
 
@@ -97,12 +98,33 @@ export function toBeA (type) {
   // User-friendly component description.
   const displayName = getDisplayName(type);
   const element = this.actual;
+  const { article = 'a' } = this;
 
   // Check the type.
   expect.assert(
     element.is(type),
-    `Expected ${element.name()} to be a ${displayName}`
+    `Expected ${element.name()} to be ${article} ${displayName}`
   );
+
+  return this;
+}
+
+/**
+ * Same as `.toBeA(type)`, but with different wording.
+ * @param  {String|Function} type - The type you expect your element to be.
+ * @return {this} - The expectation context.
+ */
+export function toBeAn (type) {
+  const isWrapper = isEnzymeWrapper(this.actual);
+
+  // Disregard non-enzyme things.
+  if (!isWrapper) {
+    return original.toBeAn.apply(this, arguments);
+  }
+
+  // Set the correct article form.
+  this.article = 'an';
+  this.toBeA(type);
 
   return this;
 }

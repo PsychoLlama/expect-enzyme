@@ -1,0 +1,12 @@
+# Changelog
+`expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
+
+## v0.2.0
+### Added
+- Support for `.toBeA(type)` method.
+
+### Fixed
+- npm distribution hadn't included compiled source.
+
+## v0.1.0
+Initial release

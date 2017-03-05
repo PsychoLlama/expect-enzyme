@@ -236,6 +236,29 @@ export function toHaveStyle (property, value) {
 }
 
 /**
+ * Asserts a component has the given context.
+ * @param  {Object} context - What you expect the context to equal.
+ * @return {this} - The expectation context.
+ */
+export function toHaveContext (context) {
+  const element = this.actual;
+  assertIsEnzymeWrapper(element);
+
+  const actual = element.context();
+
+  Object.keys(context).forEach((property) => {
+    const expected = context[property];
+
+    expect.assert(
+      deepEqual(actual[property], expected),
+      `Expected context property "${property}" to equal ${expected}`
+    );
+  });
+
+  return this;
+}
+
+/**
  * Assert the type of an enzyme wrapper.
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.

@@ -1,7 +1,7 @@
 /* eslint-disable require-jsdoc */
 /* eslint-env mocha */
 import { shallow } from 'enzyme';
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import expect from 'expect';
 
@@ -283,6 +283,52 @@ describe('expect-enzyme', () => {
       const result = expectation.toHaveStyle('color');
 
       expect(result).toBe(expectation);
+    });
+
+  });
+
+  describe('method "toHaveContext"', () => {
+    const Component = () => <div />;
+
+    // React requires this to be specified, or context won't work.
+    Component.contextTypes = {
+      data: PropTypes.string,
+    };
+
+    const element = shallow(
+      <Component />,
+      {
+        context: { data: 'probably' },
+      }
+    );
+
+    it('returns the assertion', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveContext({});
+
+      expect(result).toBe(expectation);
+    });
+
+    it('throws if actual is not an enzyme type', () => {
+      const assertion = () => expect('nope').toHaveContext({});
+
+      expect(assertion).toThrow(/enzyme/);
+    });
+
+    it('throws when the context does not match', () => {
+      const assertion = () => expect(element).toHaveContext({
+        propertyExists: false,
+      });
+
+      expect(assertion).toThrow(/context/);
+    });
+
+    it('does not throw when the context matches', () => {
+      const assertion = () => expect(element).toHaveContext({
+        data: 'probably',
+      });
+
+      expect(assertion).toNotThrow();
     });
 
   });

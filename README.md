@@ -243,7 +243,7 @@ expect(search).toNotContain('SearchResult')
 Error: Expected element to not contain "SearchResult"
 ```
 
-#### `.toHaveStyle(property, [value])`
+#### `.toHaveStyle(Object || property, [value])`
 Asserts a component contains the given css. Specifying the value is optional.
 
 ```js
@@ -252,21 +252,9 @@ expect(dialog).toHaveStyle('display', 'none')
 
 // You don't need to specify the value, though.
 expect(dialog).toHaveStyle('transition')
-```
 
-##### Error
-
-```plain
-Error: Expected Dialog to have css {display: 'none'}
-Error: Expected Dialog to have css property "transition"
-```
-
-#### `.toHaveStyles({...styles})`
-Asserts a component has a set of styles.
-
-```js
-// This marquee should be extra obnoxious.
-expect(Marquee).toHaveStyles({
+// You can also assert a whole collection of styles.
+expect(marquee).toHaveStyles({
   fontFamily: 'comic-sans',
   color: 'orange',
 })
@@ -275,6 +263,8 @@ expect(Marquee).toHaveStyles({
 ##### Error
 
 ```plain
+Error: Expected Dialog to have css {display: 'none'}
+Error: Expected Dialog to have css property "transition"
 Error: Expected Marquee to have css {fontFamily: 'comic-sans'}
 ```
 

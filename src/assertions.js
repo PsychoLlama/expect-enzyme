@@ -109,6 +109,25 @@ export function toHaveProps (props) {
 }
 
 /**
+ * Asserts a component contains a css class.
+ * @param  {String} className - The class the component should have.
+ * @return {this} - The expectation context.
+ */
+export function toHaveClass (className) {
+  const element = this.actual;
+
+  // Only works for enzyme elements.
+  assertIsEnzymeWrapper(element);
+
+  expect.assert(
+    element.hasClass(className),
+    `Expected ${element.name()} to have class "${className}"`
+  );
+
+  return this;
+}
+
+/**
  * Assert the type of an enzyme wrapper.
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.

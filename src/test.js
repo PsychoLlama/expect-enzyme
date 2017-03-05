@@ -119,6 +119,36 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toHaveClass"', () => {
+    const element = shallow(<div className="class-one classTwo class_three" />);
+
+    it('throws if actual is not an enzyme wrapper', () => {
+      const assertion = () => expect(5).toHaveClass('class-name');
+
+      expect(assertion).toThrow(/enzyme/i);
+    });
+
+    it('throws if the class name does not exist', () => {
+      const assertion = () => expect(element).toHaveClass('class-four');
+
+      expect(assertion).toThrow(/class-four/);
+    });
+
+    it('does not throw if the class name exists', () => {
+      const assertion = () => expect(element).toHaveClass('class-one');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('returns the assertion', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveClass('classTwo');
+
+      expect(result).toBe(expectation);
+    });
+
+  });
+
   describe('method "toBeA"', () => {
     const createElement = (type) => shallow(React.createElement(type));
     const Child = () => <div>Nested component</div>;

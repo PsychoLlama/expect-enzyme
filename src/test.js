@@ -219,8 +219,9 @@ describe('expect-enzyme', () => {
   });
 
   describe('method "toHaveStyle"', () => {
+    const style = { color: 'blue', transition: 'color 1s' };
     const element = shallow(
-      <div style={{ color: 'blue' }} />
+      <div style={style} />
     );
 
     it('throws if not given an enzyme wrapper', () => {
@@ -253,42 +254,14 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow();
     });
 
-    it('returns the assertion', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveStyle('color');
+    it('accepts an object of styles', () => {
+      const assertion = () => expect(element).toHaveStyle({ color: 'blue' });
 
-      expect(result).toBe(expectation);
-    });
-
-  });
-
-  describe('method "toHaveStyles"', () => {
-    const style = { color: 'blue', transition: 'color 1s' };
-    const element = shallow(
-      <div style={style} />
-    );
-
-    it('throws if actual is not an enzyme wrapper', () => {
-      const assertion = () => expect('hey').toHaveStyles({});
-
-      expect(assertion).toThrow(/enzyme/);
-    });
-
-    it('throws if styles are not an object', () => {
-      const assertion = () => expect(element).toHaveStyles('no object here');
-
-      expect(assertion).toThrow(/object/i);
-    });
-
-    it('returns the assertion', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveStyles({});
-
-      expect(result).toBe(expectation);
+      expect(assertion).toNotThrow();
     });
 
     it('throws if any style rule differs', () => {
-      const assertion = () => expect(element).toHaveStyles({
+      const assertion = () => expect(element).toHaveStyle({
         display: 'none',
         color: 'blue',
       });
@@ -297,12 +270,19 @@ describe('expect-enzyme', () => {
     });
 
     it('does not throw if all styles match', () => {
-      const assertion = () => expect(element).toHaveStyles({
+      const assertion = () => expect(element).toHaveStyle({
         transition: style.transition,
         color: style.color,
       });
 
       expect(assertion).toNotThrow();
+    });
+
+    it('returns the assertion', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveStyle('color');
+
+      expect(result).toBe(expectation);
     });
 
   });

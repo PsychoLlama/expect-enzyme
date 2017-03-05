@@ -201,52 +201,35 @@ export function toHaveStyle (property, value) {
   const style = element.prop('style') || {};
   const displayName = element.name();
 
-  // "value" parameter is optional.
-  if (value === undefined) {
+  const styles = property instanceof Object ? property : {
+    [property]: value,
+  };
 
-    // Make sure the property is specified.
-    expect.assert(
-      style.hasOwnProperty(property),
-      `Expected ${displayName} to have css property "${property}"`
-    );
-
-  } else {
-
-    // Show what css is expected.
-    const styleString = stringifyObject({ [property]: value }, {
-      inlineCharacterLimit: Infinity,
-    });
-
-    // Make sure the value matches.
-    expect.assert(
-      style[property] === value,
-      `Expected ${displayName} to have css ${styleString}`
-    );
-  }
-
-  return this;
-}
-
-/**
- * Assert a component has a set of styles.
- * @param  {Object} styles - Expected CSS property-value pairs.
- * @return {this} - The expectation context.
- */
-export function toHaveStyles (styles) {
-  const element = this.actual;
-  assertIsEnzymeWrapper(element);
-
-  // Validate the styles type.
-  expect.assert(
-    styles instanceof Object,
-    `expect(...).toHaveStyles expected an object, was given "${styles}"`
-  );
-
-  // Assert for each css rule.
   Object.keys(styles).forEach((property) => {
     const value = styles[property];
 
-    this.toHaveStyle(property, value);
+    // "value" parameter is optional.
+    if (value === undefined) {
+
+      // Make sure the property is specified.
+      expect.assert(
+        style.hasOwnProperty(property),
+        `Expected ${displayName} to have css property "${property}"`
+      );
+
+    } else {
+
+      // Show what css is expected.
+      const styleString = stringifyObject({ [property]: value }, {
+        inlineCharacterLimit: Infinity,
+      });
+
+      // Make sure the value matches.
+      expect.assert(
+        style[property] === value,
+        `Expected ${displayName} to have css ${styleString}`
+      );
+    }
   });
 
   return this;

@@ -23,6 +23,7 @@ const assertIsEnzymeWrapper = (actual) => expect.assert(
 const asserted = expect();
 
 const original = {
+  toNotBeAn: asserted.toNotBeAn,
   toNotBeA: asserted.toNotBeA,
   toExist: asserted.toExist,
   toBeAn: asserted.toBeAn,
@@ -35,7 +36,7 @@ const original = {
  * @param  {Function} enzymeAssertion - An assertion handler for enzyme types.
  * @return {Function} - An assertion method.
  */
-const handleEnzymeActual = (defaultAssertion, enzymeAssertion) => (
+const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
   function assertion () {
 
     // Is the value an enzyme wrapper?
@@ -112,7 +113,7 @@ export function toHaveProps (props) {
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.
  */
-export const toBeA = handleEnzymeActual(original.toBeA, function (type) {
+export const toBeA = addEnzymeSupport(original.toBeA, function (type) {
 
   // User-friendly component description.
   const displayName = getDisplayName(type);
@@ -124,8 +125,6 @@ export const toBeA = handleEnzymeActual(original.toBeA, function (type) {
     element.is(type),
     `Expected ${element.name()} to be ${article} ${displayName}`
   );
-
-  return this;
 });
 
 /**
@@ -133,22 +132,20 @@ export const toBeA = handleEnzymeActual(original.toBeA, function (type) {
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation context.
  */
-export const toBeAn = handleEnzymeActual(original.toBeAn, function (type) {
+export const toBeAn = addEnzymeSupport(original.toBeAn, function (type) {
 
   // Set the correct article form.
   this.article = 'an';
 
   // Assert!
   this.toBeA(type);
-
-  return this;
 });
 
 /**
  * Asserts the enzyme wrapper contains something.
  * @return {this} - The expectation context.
  */
-export const toExist = handleEnzymeActual(original.toExist, function () {
+export const toExist = addEnzymeSupport(original.toExist, function () {
   expect.assert(
     this.actual.exists(),
     'Expected element to exist'
@@ -160,13 +157,29 @@ export const toExist = handleEnzymeActual(original.toExist, function () {
  * @param  {String|Function} type - The type you expect your element not to be.
  * @return {this} - The expectation context.
  */
-export const toNotBeA = handleEnzymeActual(original.toNotBeA, function (type) {
+export const toNotBeA = addEnzymeSupport(original.toNotBeA, function (type) {
   const element = this.actual;
   const notEqual = !element.is(type);
   const displayName = getDisplayName(type);
 
+  const { article = 'a' } = this;
+
   expect.assert(
     notEqual,
-    `Expected ${element.name()} to not be a ${displayName}`
+    `Expected ${element.name()} to not be ${article} ${displayName}`
   );
+});
+
+/**
+ * Same as `.toNotBeA(type)`, but with different wording.
+ * @param  {String|Function} type - The type you expect your element not to be.
+ * @return {this} - The expectation context.
+ */
+export const toNotBeAn = addEnzymeSupport(original.toNotBeAn, function (type) {
+
+  // Correct grammar.
+  this.article = 'an';
+
+  // Throw us some errors!
+  this.toNotBeA(type);
 });

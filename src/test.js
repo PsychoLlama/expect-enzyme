@@ -242,6 +242,26 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toNotBeAn"', () => {
+    const Item = () => <div />;
+    const element = shallow(<div><Item /></div>);
+    const item = element.find('Item');
+
+    it('throws if the type matches', () => {
+      const assertion = () => expect(item).toNotBeAn(Item);
+
+      // Correct grammar usage.
+      expect(assertion).toThrow(/an/i);
+    });
+
+    it('does not throw if the type is different', () => {
+      const assertion = () => expect(element).toNotBeAn(Item);
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
   describe('method "toExist"', () => {
 
     it('only operates on enzyme values', () => {

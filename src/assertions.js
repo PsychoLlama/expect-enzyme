@@ -32,10 +32,10 @@ const original = {
  * Only attempts an enzyme assertion if the given value is an enzyme wrapper.
  * @param  {Function} defaultAssertion - An expect assertion to overload.
  * @param  {Function} enzymeAssertion - An assertion handler for enzyme types.
- * @return {this} - The expectation context.
+ * @return {Function} - An assertion method.
  */
-const handleEnzymeActual = (defaultAssertion, enzymeAssertion) => {
-  return function assertion () {
+const handleEnzymeActual = (defaultAssertion, enzymeAssertion) => (
+  function assertion () {
 
     // Is the value an enzyme wrapper?
     if (isEnzymeWrapper(this.actual)) {
@@ -48,8 +48,8 @@ const handleEnzymeActual = (defaultAssertion, enzymeAssertion) => {
 
     // Otherwise, use the built-in.
     return defaultAssertion.apply(this, arguments);
-  };
-};
+  }
+);
 
 /**
  * Assert a component has a property.

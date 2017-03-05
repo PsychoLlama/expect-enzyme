@@ -1,4 +1,5 @@
 import getDisplayName from 'react-display-name';
+import stringifyObject from 'stringify-object';
 import {ShallowWrapper} from 'enzyme';
 import deepEqual from 'deep-eql';
 import expect from 'expect';
@@ -24,6 +25,7 @@ const assertIsEnzymeWrapper = (actual) => expect.assert(
 const asserted = expect();
 
 const original = {
+  toContain: asserted.toContain,
   toNotBeAn: asserted.toNotBeAn,
   toNotBeA: asserted.toNotBeA,
   toExist: asserted.toExist,
@@ -163,73 +165,120 @@ export function toHaveState (expectedState) {
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.
  */
-export const toBeA = addEnzymeSupport(original.toBeA, function (type) {
+export const toBeA = addEnzymeSupport(
+  original.toBeA,
 
-  // User-friendly component description.
-  const displayName = getDisplayName(type);
-  const element = this.actual;
-  const { article = 'a' } = this;
+  function (type) {
 
-  // Check the type.
-  expect.assert(
-    element.is(type),
-    `Expected ${element.name()} to be ${article} ${displayName}`
-  );
-});
+    // User-friendly component description.
+    const displayName = getDisplayName(type);
+    const element = this.actual;
+    const { article = 'a' } = this;
+
+    // Check the type.
+    expect.assert(
+      element.is(type),
+      `Expected ${element.name()} to be ${article} ${displayName}`
+    );
+  }
+);
 
 /**
  * Same as `.toBeA(type)`, but with different wording.
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation context.
  */
-export const toBeAn = addEnzymeSupport(original.toBeAn, function (type) {
+export const toBeAn = addEnzymeSupport(
+  original.toBeAn,
 
-  // Set the correct article form.
-  this.article = 'an';
+  function (type) {
 
-  // Assert!
-  this.toBeA(type);
-});
+    // Set the correct article form.
+    this.article = 'an';
+
+    // Assert!
+    this.toBeA(type);
+  }
+);
 
 /**
  * Asserts the enzyme wrapper contains something.
  * @return {this} - The expectation context.
  */
-export const toExist = addEnzymeSupport(original.toExist, function () {
-  expect.assert(
-    this.actual.exists(),
-    'Expected element to exist'
-  );
-});
+export const toExist = addEnzymeSupport(
+  original.toExist,
+
+  function () {
+    expect.assert(
+      this.actual.exists(),
+      'Expected element to exist'
+    );
+  }
+);
 
 /**
  * Assert the component is not a type.
  * @param  {String|Function} type - The type you expect your element not to be.
  * @return {this} - The expectation context.
  */
-export const toNotBeA = addEnzymeSupport(original.toNotBeA, function (type) {
-  const element = this.actual;
-  const notEqual = !element.is(type);
-  const displayName = getDisplayName(type);
+export const toNotBeA = addEnzymeSupport(
+  original.toNotBeA,
 
-  const { article = 'a' } = this;
+  function (type) {
+    const element = this.actual;
+    const notEqual = !element.is(type);
+    const displayName = getDisplayName(type);
 
-  expect.assert(
-    notEqual,
-    `Expected ${element.name()} to not be ${article} ${displayName}`
-  );
-});
+    const { article = 'a' } = this;
+
+    expect.assert(
+      notEqual,
+      `Expected ${element.name()} to not be ${article} ${displayName}`
+    );
+  }
+);
 
 /**
  * Same as `.toNotBeA(type)`, but with different wording.
  * @param  {String|Function} type - The type you expect your element not to be.
  * @return {this} - The expectation context.
  */
-export const toNotBeAn = addEnzymeSupport(original.toNotBeAn, function (type) {
+export const toNotBeAn = addEnzymeSupport(
+  original.toNotBeAn,
 
-  // Correct grammar.
-  this.article = 'an';
+  function (type) {
 
-  // Throw us some errors!
-  this.toNotBeA(type);
-});
+    // Correct grammar.
+    this.article = 'an';
+
+    // Throw us some errors!
+    this.toNotBeA(type);
+  }
+);
+
+/**
+ * Assert a component contains a selector.
+ * @param  {String|Function|Object} selector -
+ * A selector your element should have.
+ * @return {this} - The expectation context.
+ */
+export const toContain = addEnzymeSupport(
+  original.toContain,
+
+  function (selector) {
+    const element = this.actual;
+    const isContained = element.find(selector).exists();
+
+    // Support enzyme attribute selectors.
+    const stringSelector = typeof selector === 'object' && selector
+
+      // Display selector inline as a pretty object.
+      ? stringifyObject(selector, { inlineCharacterLimit: Infinity })
+      : selector;
+
+    expect.assert(
+      isContained,
+      `Expected ${element.name()} to contain "${stringSelector}"`
+    );
+  }
+);

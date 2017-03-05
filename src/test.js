@@ -218,6 +218,55 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toContain"', () => {
+    const Component = () => <div />;
+    const element = shallow(
+      <div>
+        <article />
+
+        <aside />
+        <aside />
+
+        <Component enabled className="component" />
+      </div>
+    );
+
+    it('only affects enzyme types', () => {
+      expect(() => expect('hello world').toContain('hello')).toNotThrow();
+      expect(() => expect([1, 2, 3]).toContain(3)).toNotThrow();
+
+      expect(() => expect({}).toContain({ key: 'value' })).toThrow();
+      expect(() => expect([1, 2, 3]).toContain(4)).toThrow();
+    });
+
+    it('throws if the value does not exist', () => {
+      const assertion = () => expect(element).toContain('SomeComponent');
+
+      expect(assertion).toThrow(/SomeComponent/);
+    });
+
+    it('does not throw if the selector is found', () => {
+      const assertion = () => expect(element).toContain('article');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('does not throw if many matches are found', () => {
+      const assertion = () => expect(element).toContain('aside');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('works with advanced enzyme selectors', () => {
+      expect(() => expect(element).toContain(Component)).toNotThrow();
+      expect(() => expect(element).toContain('.component')).toNotThrow();
+      expect(() => expect(element).toContain({ enabled: true })).toNotThrow();
+
+      expect(() => expect(element).toContain({ enabled: false })).toThrow();
+    });
+
+  });
+
   describe('method "toBeA"', () => {
     const createElement = (type) => shallow(React.createElement(type));
     const Child = () => <div>Nested component</div>;

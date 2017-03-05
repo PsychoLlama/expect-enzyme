@@ -23,6 +23,7 @@ const assertIsEnzymeWrapper = (actual) => expect.assert(
 const asserted = expect();
 
 const original = {
+  toNotBeA: asserted.toNotBeA,
   toExist: asserted.toExist,
   toBeAn: asserted.toBeAn,
   toBeA: asserted.toBeA,
@@ -143,9 +144,29 @@ export const toBeAn = handleEnzymeActual(original.toBeAn, function (type) {
   return this;
 });
 
+/**
+ * Asserts the enzyme wrapper contains something.
+ * @return {this} - The expectation context.
+ */
 export const toExist = handleEnzymeActual(original.toExist, function () {
   expect.assert(
     this.actual.exists(),
     'Expected element to exist'
+  );
+});
+
+/**
+ * Assert the component is not a type.
+ * @param  {String|Function} type - The type you expect your element not to be.
+ * @return {this} - The expectation context.
+ */
+export const toNotBeA = handleEnzymeActual(original.toNotBeA, function (type) {
+  const element = this.actual;
+  const notEqual = !element.is(type);
+  const displayName = getDisplayName(type);
+
+  expect.assert(
+    notEqual,
+    `Expected ${element.name()} to not be a ${displayName}`
   );
 });

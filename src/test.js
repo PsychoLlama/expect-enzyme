@@ -208,7 +208,48 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toNotBeA"', () => {
+    const element = shallow(<header />);
+
+    it('throws if the type matches', () => {
+      const assertion = () => expect(element).toNotBeA('header');
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not throw if the type does not match', () => {
+      const assertion = () => expect(element).toNotBeA('div');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('only operates on enzyme values', () => {
+      expect(() => expect('value').toNotBeA('function')).toNotThrow();
+      expect(() => expect('value').toNotBeA('number')).toNotThrow();
+
+      expect(() => expect('value').toNotBeA('string')).toThrow();
+      expect(() => expect(9001).toNotBeA('number')).toThrow();
+    });
+
+    it('works with components', () => {
+      const Component = () => <div />;
+      const element = shallow(<div><Component /></div>);
+      const component = element.find('Component');
+
+      expect(() => expect(component).toNotBeA(Component)).toThrow();
+      expect(() => expect(element).toNotBeA(Component)).toNotThrow();
+    });
+
+  });
+
   describe('method "toExist"', () => {
+
+    it('only operates on enzyme values', () => {
+      expect(() => expect('stuff').toExist()).toNotThrow();
+      expect(() => expect({}).toExist()).toNotThrow();
+
+      expect(() => expect(undefined).toExist()).toThrow();
+    });
 
     it('throws if the element does not exist', () => {
       const noSuchElement = element.find('NoSuchElement');

@@ -1,5 +1,6 @@
 import getDisplayName from 'react-display-name';
 import {ShallowWrapper} from 'enzyme';
+import deepEqual from 'deep-eql';
 import expect from 'expect';
 
 /**
@@ -123,6 +124,36 @@ export function toHaveClass (className) {
     element.hasClass(className),
     `Expected ${element.name()} to have class "${className}"`
   );
+
+  return this;
+}
+
+/**
+ * Assert the element contains the given state.
+ * @param  {Object} expectedState - State the component should contain.
+ * @return {this} - The expectation context.
+ */
+export function toHaveState (expectedState) {
+  const element = this.actual;
+  assertIsEnzymeWrapper(element);
+
+  // Make sure the expected state is valid.
+  expect.assert(
+    expectedState instanceof Object,
+    `expect(...).toHaveState expects an object, was given "${expectedState}"`
+  );
+
+  // Check every property in the expected state.
+  Object.keys(expectedState).forEach((key) => {
+    const actual = element.state(key);
+    const expected = expectedState[key];
+
+    // Deeply check equivalence.
+    expect.assert(
+      deepEqual(actual, expected),
+      `Expected state "${key}" to equal ${expected}`
+    );
+  });
 
   return this;
 }

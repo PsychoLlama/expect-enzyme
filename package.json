@@ -25,10 +25,11 @@
   "license": "MIT",
   "author": "Jesse Gibson",
   "dependencies": {
+    "deep-eql": "^2.0.1",
     "enzyme": "2.x.x",
     "expect": "^1.20.2",
-    "react-display-name": "^0.2.0",
     "react": "13.0.0 - 15.x.x",
+    "react-display-name": "^0.2.0",
     "react-dom": "13.0.0 - 15.x.x"
   },
   "devDependencies": {

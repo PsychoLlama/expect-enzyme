@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 /* eslint-env mocha */
 import { shallow } from 'enzyme';
 import React from 'react';
@@ -143,6 +144,74 @@ describe('expect-enzyme', () => {
     it('returns the assertion', () => {
       const expectation = expect(element);
       const result = expectation.toHaveClass('classTwo');
+
+      expect(result).toBe(expectation);
+    });
+
+  });
+
+  describe('method "toHaveState"', () => {
+    // Must be a stateful component.
+    class Element extends React.Component {
+      constructor () {
+        super();
+        this.state = {};
+      }
+
+      render () {
+        return <div />;
+      }
+    }
+
+    const element = shallow(<Element />);
+
+    it('throws if the given value is not an enzyme wrapper', () => {
+      const assertion = () => expect('potatoes').toHaveState({});
+
+      expect(assertion).toThrow(/enzyme/i);
+    });
+
+    it('does not throw if the state matches', () => {
+      const assertion = () => expect(element).toHaveState({});
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if an object is not given', () => {
+      const assertion = () => expect(element).toHaveState();
+
+      expect(assertion).toThrow();
+    });
+
+    it('throws if a state does not exist', () => {
+      const assertion = () => expect(element).toHaveState({
+        count: 1,
+      });
+
+      expect(assertion).toThrow();
+    });
+
+    it('throws if the state does not match', () => {
+      element.setState({ count: 1 });
+      const assertion = () => expect(element).toHaveState({
+        count: 5,
+      });
+
+      expect(assertion).toThrow(/5/);
+    });
+
+    it('does not throw if the state is deeply equal', () => {
+      element.setState({ value: { isNested: true } });
+      const assertion = () => expect(element).toHaveState({
+        value: { isNested: true },
+      });
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('returns the expectation', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveState({});
 
       expect(result).toBe(expectation);
     });

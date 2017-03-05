@@ -243,11 +243,28 @@ expect(search).toNotContain('SearchResult')
 Error: Expected element to not contain "SearchResult"
 ```
 
+#### `.toHaveStyle(property, [value])`
+Asserts a component contains the given css. Specifying the value is optional.
+
+```js
+// This dialog should be hidden.
+expect(dialog).toHaveStyle('display', 'hidden')
+
+// You don't need to specify the value, though.
+expect(dialog).toHaveStyle('transition')
+```
+
+##### Error
+
+```plain
+Error: Expected Dialog to have css {display: 'hidden'}
+Error: Expected Dialog to have css property "transition"
+```
+
 ## Roadmap
 There are more methods to augment:
 
 - `.toHaveContext(object)`
-- `.toHaveStyle(name, value)`
 - `.toHaveStyles(object)`
 
 If you contribute one of these methods, you'll be my favorite person ever :heart:

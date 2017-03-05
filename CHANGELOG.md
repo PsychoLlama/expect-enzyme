@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.10.0
+### Added
+- New `.toHaveStyle(property, [value])` assertion.
+
 ## v0.9.0
 ### Added
 - Support for `.toNotExist()` assertion.

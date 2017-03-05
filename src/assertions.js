@@ -28,6 +28,29 @@ const original = {
 };
 
 /**
+ * Only attempts an enzyme assertion if the given value is an enzyme wrapper.
+ * @param  {Function} defaultAssertion - An expect assertion to overload.
+ * @param  {Function} enzymeAssertion - An assertion handler for enzyme types.
+ * @return {this} - The expectation context.
+ */
+const handleEnzymeActual = (defaultAssertion, enzymeAssertion) => {
+  return function assertion () {
+
+    // Is the value an enzyme wrapper?
+    if (isEnzymeWrapper(this.actual)) {
+
+      // Use the enzyme assertion.
+      enzymeAssertion.apply(this, arguments);
+
+      return this;
+    }
+
+    // Otherwise, use the built-in.
+    return defaultAssertion.apply(this, arguments);
+  };
+};
+
+/**
  * Assert a component has a property.
  * @param  {String} prop - An expected property.
  * @param  {Any} [value] - An expected value.
@@ -87,13 +110,7 @@ export function toHaveProps (props) {
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.
  */
-export function toBeA (type) {
-  const isWrapper = isEnzymeWrapper(this.actual);
-
-  // Defer everything non-enzyme related to the original method.
-  if (isWrapper === false) {
-    return original.toBeA.apply(this, arguments);
-  }
+export const toBeA = handleEnzymeActual(original.toBeA, function (type) {
 
   // User-friendly component description.
   const displayName = getDisplayName(type);
@@ -107,24 +124,20 @@ export function toBeA (type) {
   );
 
   return this;
-}
+});
 
 /**
  * Same as `.toBeA(type)`, but with different wording.
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation context.
  */
-export function toBeAn (type) {
-  const isWrapper = isEnzymeWrapper(this.actual);
-
-  // Disregard non-enzyme things.
-  if (!isWrapper) {
-    return original.toBeAn.apply(this, arguments);
-  }
+export const toBeAn = handleEnzymeActual(original.toBeAn, function (type) {
 
   // Set the correct article form.
   this.article = 'an';
+
+  // Assert!
   this.toBeA(type);
 
   return this;
-}
+});

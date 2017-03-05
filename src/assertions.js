@@ -22,9 +22,36 @@ const assertIsEnzymeWrapper = (actual) => expect.assert(
   `${actual} is not an enzyme wrapper`
 );
 
+/**
+ * Turns an enzyme selector into a printable string.
+ * @param  {Function|String|Object} selector - An enzyme selector.
+ * @return {String} - A loggable description of the selector.
+ */
+const stringifySelector = (selector) => {
+  const type = typeof selector;
+
+  // CSS selector?
+  if (type === 'string') {
+    return selector;
+  }
+
+  // Component instance selector?
+  if (type === 'function') {
+    return getDisplayName(selector);
+  }
+
+  // Nope, enzyme attribute selector.
+  return stringifyObject(selector, {
+
+    // Prevents newlines.
+    inlineCharacterLimit: Infinity,
+  });
+};
+
 const asserted = expect();
 
 const original = {
+  toNotContain: asserted.toNotContain,
   toContain: asserted.toContain,
   toNotBeAn: asserted.toNotBeAn,
   toNotBeA: asserted.toNotBeA,
@@ -267,18 +294,35 @@ export const toContain = addEnzymeSupport(
 
   function (selector) {
     const element = this.actual;
+
     const isContained = element.find(selector).exists();
-
-    // Support enzyme attribute selectors.
-    const stringSelector = typeof selector === 'object' && selector
-
-      // Display selector inline as a pretty object.
-      ? stringifyObject(selector, { inlineCharacterLimit: Infinity })
-      : selector;
+    const stringSelector = stringifySelector(selector);
 
     expect.assert(
       isContained,
-      `Expected ${element.name()} to contain "${stringSelector}"`
+      `Expected element to contain "${stringSelector}"`
+    );
+  }
+);
+
+/**
+ * Asserts a component does not contain a selector.
+ * @param  {String|Function|Object} selector -
+ * A selector your component should not contain.
+ * @return {this} - The expectation context.
+ */
+export const toNotContain = addEnzymeSupport(
+  original.toNotContain,
+
+  function (selector) {
+    const element = this.actual;
+
+    const isContained = element.find(selector).exists();
+    const stringSelector = stringifySelector(selector);
+
+    expect.assert(
+      isContained === false,
+      `Expected element to not contain "${stringSelector}"`
     );
   }
 );

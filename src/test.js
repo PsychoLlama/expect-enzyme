@@ -267,6 +267,42 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toNotContain"', () => {
+    const Component = () => <div />;
+    const element = shallow(
+      <div>
+        <article />
+
+        <aside />
+        <aside />
+
+        <Component enabled className="component" />
+      </div>
+    );
+
+
+    it('only affects enzyme types', () => {
+      expect(() => expect('hello').toNotContain('lettuce')).toNotThrow();
+      expect(() => expect([1, 2, 3]).toNotContain(60)).toNotThrow();
+
+      expect(() => expect('hello world').toNotContain('world')).toThrow();
+      expect(() => expect([1, 2, 3]).toNotContain(1)).toThrow();
+    });
+
+    it('throws if the selector is found', () => {
+      const assertion = () => expect(element).toNotContain('article');
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not throw if the selector cannot be found', () => {
+      const assertion = () => expect(element).toNotContain('section');
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
   describe('method "toBeA"', () => {
     const createElement = (type) => shallow(React.createElement(type));
     const Child = () => <div>Nested component</div>;

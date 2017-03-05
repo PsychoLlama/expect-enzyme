@@ -59,7 +59,7 @@ yarn add expect-enzyme --dev
 
 ```js
 import expect from 'expect'
-import enzymify from 'expect-enzyme';
+import enzymify from 'expect-enzyme'
 
 // Infects the kernel with a crippling rootkit.
 // Just kidding.
@@ -72,6 +72,7 @@ expect.extend(enzymify)
 These are the expect methods that understand enzyme with this plugin:
 
 #### `.toBeA(type)`
+Asserts a component is the given type.
 
 ```js
 // Can use a string...
@@ -90,6 +91,7 @@ Error: Expected div to be a video
 > Aliases: `.toBeAn()`
 
 #### `.toNotBeA(type)`
+Asserts a component is not the given type.
 
 ```js
 // Once again, it accepts a string...
@@ -109,6 +111,7 @@ Error: Expected DropDown to not be a DropDown
 > Aliases: `.toNotBeAn()`
 
 #### `.toExist()`
+Asserts an element exists.
 
 ```js
 expect(element).toExist()
@@ -118,6 +121,22 @@ expect(element).toExist()
 
 ```plain
 Error: Expected element to exist
+```
+
+#### `.toNotExist()`
+Asserts an element does not exist.
+
+> **Note:** using [`.toNotContain`](#tonotcontainselector) often produces better error messages.
+
+```js
+// This shouldn't contain an ErrorMessage component.
+expect(element.find('ErrorMessage')).toNotExist()
+```
+
+##### Error
+
+```plain
+Error: Expected element to not exist
 ```
 
 ### Extensions
@@ -170,7 +189,7 @@ Error: Expected button to have class "disabled"
 ```
 
 #### `.toHaveState({...state})`
-Asserts a component contains the state you expect.
+Asserts a component contains specific state.
 
 ```js
 // Throws if either property is different.

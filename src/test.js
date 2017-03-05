@@ -262,6 +262,51 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toHaveStyles"', () => {
+    const style = { color: 'blue', transition: 'color 1s' };
+    const element = shallow(
+      <div style={style} />
+    );
+
+    it('throws if actual is not an enzyme wrapper', () => {
+      const assertion = () => expect('hey').toHaveStyles({});
+
+      expect(assertion).toThrow(/enzyme/);
+    });
+
+    it('throws if styles are not an object', () => {
+      const assertion = () => expect(element).toHaveStyles('no object here');
+
+      expect(assertion).toThrow(/object/i);
+    });
+
+    it('returns the assertion', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveStyles({});
+
+      expect(result).toBe(expectation);
+    });
+
+    it('throws if any style rule differs', () => {
+      const assertion = () => expect(element).toHaveStyles({
+        display: 'none',
+        color: 'blue',
+      });
+
+      expect(assertion).toThrow(/style|css/i);
+    });
+
+    it('does not throw if all styles match', () => {
+      const assertion = () => expect(element).toHaveStyles({
+        transition: style.transition,
+        color: style.color,
+      });
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
   describe('method "toContain"', () => {
     const Component = () => <div />;
     const element = shallow(

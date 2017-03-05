@@ -196,7 +196,6 @@ export function toHaveState (expectedState) {
  */
 export function toHaveStyle (property, value) {
   const element = this.actual;
-
   assertIsEnzymeWrapper(element);
 
   const style = element.prop('style') || {};
@@ -224,6 +223,31 @@ export function toHaveStyle (property, value) {
       `Expected ${displayName} to have css ${styleString}`
     );
   }
+
+  return this;
+}
+
+/**
+ * Assert a component has a set of styles.
+ * @param  {Object} styles - Expected CSS property-value pairs.
+ * @return {this} - The expectation context.
+ */
+export function toHaveStyles (styles) {
+  const element = this.actual;
+  assertIsEnzymeWrapper(element);
+
+  // Validate the styles type.
+  expect.assert(
+    styles instanceof Object,
+    `expect(...).toHaveStyles expected an object, was given "${styles}"`
+  );
+
+  // Assert for each css rule.
+  Object.keys(styles).forEach((property) => {
+    const value = styles[property];
+
+    this.toHaveStyle(property, value);
+  });
 
   return this;
 }

@@ -142,7 +142,7 @@ Error: Expected element to not exist
 ### Extensions
 New methods added for `expect` assertions.
 
-#### `.toHaveProp(String name, [Any value])`
+#### `.toHaveProp(name, [value])`
 Asserts a component was given a prop, and optionally specifies its value.
 
 ```js
@@ -248,7 +248,7 @@ Asserts a component contains the given css. Specifying the value is optional.
 
 ```js
 // This dialog should be hidden.
-expect(dialog).toHaveStyle('display', 'hidden')
+expect(dialog).toHaveStyle('display', 'none')
 
 // You don't need to specify the value, though.
 expect(dialog).toHaveStyle('transition')
@@ -257,15 +257,31 @@ expect(dialog).toHaveStyle('transition')
 ##### Error
 
 ```plain
-Error: Expected Dialog to have css {display: 'hidden'}
+Error: Expected Dialog to have css {display: 'none'}
 Error: Expected Dialog to have css property "transition"
+```
+
+#### `.toHaveStyles({...styles})`
+Asserts a component has a set of styles.
+
+```js
+// This marquee should be extra obnoxious.
+expect(Marquee).toHaveStyles({
+  fontFamily: 'comic-sans',
+  color: 'orange',
+})
+```
+
+##### Error
+
+```plain
+Error: Expected Marquee to have css {fontFamily: 'comic-sans'}
 ```
 
 ## Roadmap
 There are more methods to augment:
 
 - `.toHaveContext(object)`
-- `.toHaveStyles(object)`
 
 If you contribute one of these methods, you'll be my favorite person ever :heart:
 

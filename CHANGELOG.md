@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.13.0
+### Added
+- `.toHaveContext({...})` assertion.
+
 ## v0.12.0
 ### Changed
 - `.toHaveStyle()` now accepts an object of styles, replacing `.toHaveStyles({...})`.

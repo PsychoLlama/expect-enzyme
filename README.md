@@ -268,12 +268,30 @@ Error: Expected Dialog to have css property "transition"
 Error: Expected Marquee to have css {fontFamily: 'comic-sans'}
 ```
 
-## Roadmap
-There are more methods to augment:
+#### `.toHaveContext({...context})`
+Asserts the component contains the given context.
 
-- `.toHaveContext(object)`
+Honestly, this only comes in handy if you're ensuring the `contextTypes` incantation succeeded.
 
-If you contribute one of these methods, you'll be my favorite person ever :heart:
+> **Note:** React's context API is fickle. Make sure you [read the docs](https://facebook.github.io/react/docs/context.html)
+  before doing anything crazy.<br />
+  Also, be sure to ask yourself why you're using the context API at all.
+
+```js
+// Ensure your component receives this context.
+// You'll probably never do this unless you're a hardcore React library developer.
+expect(element).toHaveContext({
+  state: {
+    value: 'maybe',
+  },
+})
+```
+
+##### Error
+
+```plain
+Error: Expected context property "state" to equal {value: 'maybe'}
+```
 
 ## Support
 :star: Please star this repository to maintain my unbounded ego.

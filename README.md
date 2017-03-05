@@ -186,10 +186,47 @@ expect(counter).toHaveState({
 Error: Expected state "count" to equal 5
 ```
 
+#### `.toContain(selector)`
+Asserts the component does contain the given selector.
+
+```js
+// This blog post should have a byline.
+expect(blogPost).toContain('article')
+
+// Works with components, too.
+expect(blogPost).toContain(AuthorByline)
+
+// And attribute selectors. But please don't.
+expect(blogPost).toContain({ commentsEnabled: true })
+```
+
+##### Error
+
+```plain
+Error: Expected element to contain "article"
+Error: Expected element to contain "AuthorByline"
+Error: Expected element to contain "{commentsEnabled: true}"
+```
+
+#### `.toNotContain(selector)`
+Asserts the component does not contain the given selector.
+
+> **Note:** accepts the same types as [`.toContain`](#tocontainselector)
+
+```js
+// This search should not have a search result.
+expect(search).toNotContain('SearchResult')
+```
+
+##### Error
+
+```plain
+Error: Expected element to not contain "SearchResult"
+```
+
 ## Roadmap
 There are more methods to augment:
 
-- `.toContain(selector)`
 - `.toHaveContext(object)`
 - `.toHaveStyle(name, value)`
 - `.toHaveStyles(object)`

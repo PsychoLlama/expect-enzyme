@@ -1,22 +1,27 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.8.0
+### Added
+- New `.toContain(selector)` assertion.
+- New `.toNotContain(selector)` assertion.
+
 ## v0.7.0
 ### Added
-- New `.toHaveState()` method.
+- New `.toHaveState({...state})` assertion.
 
 ## v0.6.0
 ### Added
-- New `.toHaveClass()` method.
+- New `.toHaveClass(className)` assertion.
 
 ## v0.5.0
 ### Added
-- Support for `.toNotBeA()` method.
-- Support for `.toNotBeAn()` method.
+- Support for `.toNotBeA(type)` assertion.
+- Support for `.toNotBeAn(type)` assertion.
 
 ## v0.4.0
 ### Added
-- Support for `.toExist()` method.
+- Support for `.toExist()` assertion.
 
 ## v0.3.1
 ### Added
@@ -24,11 +29,11 @@
 
 ## v0.3.0
 ### Added
-- Support for `.toBeAn(type)` method. Slightly changes error messages for grammatical accuracy.
+- Support for `.toBeAn(type)` assertion. Slightly changes error messages for grammatical accuracy.
 
 ## v0.2.0
 ### Added
-- Support for `.toBeA(type)` method.
+- Support for `.toBeA(type)` assertion.
 
 ### Fixed
 - npm distribution hadn't included compiled source.

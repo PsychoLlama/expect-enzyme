@@ -1,6 +1,11 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.5.0
+### Added
+- Support for `.toNotBeA()` method.
+- Support for `.toNotBeAn()` method.
+
 ## v0.4.0
 ### Added
 - Support for `.toExist()` method.

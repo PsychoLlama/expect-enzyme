@@ -85,6 +85,25 @@ Error: Expected div to be a video
 
 > Aliases: `.toBeAn()`
 
+#### `.toNotBeA(type)`
+
+```js
+// Once again, it accepts a string...
+expect(element).toNotBeA('nav')
+
+// Or a component type.
+expect(element).toNotBeA(DropDown)
+```
+
+##### Error
+
+```plain
+Error: Expected nav to not be a nav
+Error: Expected DropDown to not be a DropDown
+```
+
+> Aliases: `.toNotBeAn()`
+
 #### `.toExist()`
 
 ```js
@@ -135,7 +154,6 @@ Error: Expected Button to have prop "size"
 ## Roadmap
 There are more methods to augment:
 
-- `.toNotBeA(type)`
 - `.toContain(selector)`
 - `.toHaveClass(name)`
 - `.toHaveState(object)`

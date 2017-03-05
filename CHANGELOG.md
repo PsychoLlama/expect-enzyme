@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.4.0
+### Added
+- Support for `.toExist()` method.
+
 ## v0.3.1
 ### Added
 - Shiny new readme.

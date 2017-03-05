@@ -85,6 +85,18 @@ Error: Expected div to be a video
 
 > Aliases: `.toBeAn()`
 
+#### `.toExist()`
+
+```js
+expect(element).toExist()
+```
+
+##### Error
+
+```plain
+Error: Expected element to exist
+```
+
 ### Extensions
 New methods added for `expect` assertions.
 
@@ -102,8 +114,8 @@ expect(user).toHaveProp('name', 'l33t_hackzor')
 ##### Error
 
 ```plain
-Error: Expected div to have prop "disabled".
-Error: Expected User property "name" to be "l33t_hackzor".
+Error: Expected div to have prop "disabled"
+Error: Expected User property "name" to be "l33t_hackzor"
 ```
 
 #### `.toHaveProps({...props})`
@@ -117,7 +129,7 @@ expect(button).toHaveProps({size: 'large', type: 'action'})
 ##### Error
 
 ```plain
-Error: Expected Button to have prop "size".
+Error: Expected Button to have prop "size"
 ```
 
 ## Roadmap
@@ -125,9 +137,11 @@ There are more methods to augment:
 
 - `.toNotBeA(type)`
 - `.toContain(selector)`
-- `.toExist()`
 - `.toHaveClass(name)`
 - `.toHaveState(object)`
+- `.toHaveContext(object)`
+- `.toHaveStyle(name, value)`
+- `.toHaveStyles(object)`
 
 If you contribute one of these methods, you'll be my favorite person ever :heart:
 

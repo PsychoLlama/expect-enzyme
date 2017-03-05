@@ -208,4 +208,21 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toExist"', () => {
+
+    it('throws if the element does not exist', () => {
+      const noSuchElement = element.find('NoSuchElement');
+      const assertion = () => expect(noSuchElement).toExist();
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not throw if the element does exist', () => {
+      const assertion = () => expect(element).toExist();
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
 });

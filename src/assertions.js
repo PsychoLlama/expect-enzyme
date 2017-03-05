@@ -17,12 +17,13 @@ const isEnzymeWrapper = (actual) => actual instanceof ShallowWrapper;
  */
 const assertIsEnzymeWrapper = (actual) => expect.assert(
   isEnzymeWrapper(actual),
-  `${actual} is not an enzyme wrapper.`
+  `${actual} is not an enzyme wrapper`
 );
 
 const asserted = expect();
 
 const original = {
+  toExist: asserted.toExist,
   toBeAn: asserted.toBeAn,
   toBeA: asserted.toBeA,
 };
@@ -64,13 +65,13 @@ export function toHaveProp (prop, value) {
 
   expect.assert(
     actual.hasOwnProperty(prop),
-    `Expected ${displayName} to have prop "${prop}".`
+    `Expected ${displayName} to have prop "${prop}"`
   );
 
   if (value !== undefined) {
     expect.assert(
       actual[prop] === value,
-      `Expected ${displayName} property "${prop}" to be "${value}".`
+      `Expected ${displayName} property "${prop}" to be "${value}"`
     );
   }
 
@@ -87,7 +88,7 @@ export function toHaveProps (props) {
   // Props should be an object.
   expect.assert(
     props instanceof Object,
-    `Method "toHaveProps()" expected a props object, was given "${props}".`
+    `Method "toHaveProps()" expected a props object, was given "${props}"`
   );
 
   // Make sure we're dealing with an enzyme wrapper.
@@ -140,4 +141,11 @@ export const toBeAn = handleEnzymeActual(original.toBeAn, function (type) {
   this.toBeA(type);
 
   return this;
+});
+
+export const toExist = handleEnzymeActual(original.toExist, function () {
+  expect.assert(
+    this.actual.exists(),
+    'Expected element to exist'
+  );
 });

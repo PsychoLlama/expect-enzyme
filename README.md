@@ -151,11 +151,24 @@ expect(button).toHaveProps({size: 'large', type: 'action'})
 Error: Expected Button to have prop "size"
 ```
 
+#### `.toHaveClass(className)`
+Asserts a component contains a class name.
+
+```js
+// This button should be disabled.
+expect(button).toHaveClass('disabled')
+```
+
+##### Error
+
+```plain
+Error: Expected button to have class "disabled"
+```
+
 ## Roadmap
 There are more methods to augment:
 
 - `.toContain(selector)`
-- `.toHaveClass(name)`
 - `.toHaveState(object)`
 - `.toHaveContext(object)`
 - `.toHaveStyle(name, value)`

@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.6.0
+### Added
+- New `.toHaveClass()` method.
+
 ## v0.5.0
 ### Added
 - Support for `.toNotBeA()` method.

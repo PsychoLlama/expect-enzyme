@@ -1,6 +1,10 @@
 # expect-enzyme
 *Super-powered enzyme assertions*
 
+[![Travis branch](https://img.shields.io/travis/PsychoLlama/expect-enzyme/master.svg?style=flat-square)](https://travis-ci.org/PsychoLlama/expect-enzyme)
+[![npm downloads](https://img.shields.io/npm/dt/expect-enzyme.svg?style=flat-square)](https://www.npmjs.com/package/expect-enzyme)
+[![npm versions](https://img.shields.io/npm/v/expect-enzyme.svg?style=flat-square)](https://www.npmjs.com/package/expect-enzyme)
+
 ## Why you need this
 The [expect](https://github.com/mjackson/expect) library by [mjackson](https://github.com/mjackson) is super great. I'm not gonna try to convince you of that. Try it for yourself and experience the magic of improved error messages.
 

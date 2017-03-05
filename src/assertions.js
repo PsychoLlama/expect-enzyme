@@ -52,6 +52,7 @@ const asserted = expect();
 
 const original = {
   toNotContain: asserted.toNotContain,
+  toNotExist: asserted.toNotExist,
   toContain: asserted.toContain,
   toNotBeAn: asserted.toNotBeAn,
   toNotBeA: asserted.toNotBeA,
@@ -239,6 +240,23 @@ export const toExist = addEnzymeSupport(
     expect.assert(
       this.actual.exists(),
       'Expected element to exist'
+    );
+  }
+);
+
+/**
+ * Asserts an element does not exist.
+ * @return {this} - The expectation context.
+ */
+export const toNotExist = addEnzymeSupport(
+  original.toNotExist,
+
+  function () {
+    const exists = this.actual.exists();
+
+    expect.assert(
+      exists === false,
+      'Expected element to not exist'
     );
   }
 );

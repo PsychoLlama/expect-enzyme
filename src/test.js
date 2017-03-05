@@ -470,4 +470,28 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toNotExist"', () => {
+
+    it('should only affect enzyme types', () => {
+      expect(() => expect(undefined).toNotExist()).toNotThrow();
+      expect(() => expect(false).toNotExist()).toNotThrow();
+
+      expect(() => expect(true).toNotExist()).toThrow();
+      expect(() => expect('value').toNotExist()).toThrow();
+    });
+
+    it('throws if the element exists', () => {
+      const assertion = () => expect(element).toNotExist();
+
+      expect(assertion).toThrow(/not exist/);
+    });
+
+    it('does not throw if the element does not exist', () => {
+      const assertion = () => expect(element.find('Elvis')).toNotExist();
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
 });

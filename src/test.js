@@ -253,6 +253,13 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow();
     });
 
+    it('returns the assertion', () => {
+      const expectation = expect(element);
+      const result = expectation.toHaveStyle('color');
+
+      expect(result).toBe(expectation);
+    });
+
   });
 
   describe('method "toContain"', () => {

@@ -223,8 +223,9 @@ export function toHaveStyle (property, value) {
       style[property] === value,
       `Expected ${displayName} to have css ${styleString}`
     );
-
   }
+
+  return this;
 }
 
 /**

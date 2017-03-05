@@ -218,6 +218,43 @@ describe('expect-enzyme', () => {
 
   });
 
+  describe('method "toHaveStyle"', () => {
+    const element = shallow(
+      <div style={{ color: 'blue' }} />
+    );
+
+    it('throws if not given an enzyme wrapper', () => {
+      const assertion = () => expect(5).toHaveStyle('color', 'red');
+
+      expect(assertion).toThrow(/enzyme/);
+    });
+
+    it('throws if the component does not contain the style', () => {
+      const assertion = () => expect(element).toHaveStyle('translate');
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not throw if the property exists and no value is asserted', () => {
+      const assertion = () => expect(element).toHaveStyle('color');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the value given does not match', () => {
+      const assertion = () => expect(element).toHaveStyle('color', 'beige');
+
+      expect(assertion).toThrow(/beige/);
+    });
+
+    it('does not throw if the given value matches', () => {
+      const assertion = () => expect(element).toHaveStyle('color', 'blue');
+
+      expect(assertion).toNotThrow();
+    });
+
+  });
+
   describe('method "toContain"', () => {
     const Component = () => <div />;
     const element = shallow(

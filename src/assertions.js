@@ -189,6 +189,39 @@ export function toHaveState (expectedState) {
 }
 
 /**
+ * Asserts a component contains a given style.
+ * @param  {String} property - A CSS property.
+ * @param  {Any} [value] - The expected CSS value.
+ * @return {this} - The expectation context.
+ */
+export function toHaveStyle (property, value) {
+  const element = this.actual;
+
+  assertIsEnzymeWrapper(element);
+
+  const style = element.prop('style') || {};
+  const displayName = element.name();
+
+  expect.assert(
+    property in style,
+    `Expected ${displayName} to have css property "${property}"`
+  );
+
+  if (value !== undefined) {
+
+    // Show what css is expected.
+    const styleString = stringifyObject({ [property]: value }, {
+      inlineCharacterLimit: Infinity,
+    });
+
+    expect.assert(
+      style[property] === value,
+      `Expected ${displayName} to have css ${styleString}`
+    );
+  }
+}
+
+/**
  * Assert the type of an enzyme wrapper.
  * @param  {String|Function} type - The type you expect your element to be.
  * @return {this} - The expectation.

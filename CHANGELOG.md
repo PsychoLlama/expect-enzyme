@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.13.1
+### Changed
+- If you're using `require`, you no longer need to import `.default` from `expect-enzyme`.
+
 ## v0.13.0
 ### Added
 - `.toHaveContext({...})` assertion.

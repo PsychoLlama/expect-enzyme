@@ -1,3 +1,8 @@
 import * as assertions from './assertions';
 
-export default assertions;
+// Re-export assertions for ESModules/CommonJS interop.
+for (const key in assertions) {
+  if (assertions.hasOwnProperty(key)) {
+    exports[key] = assertions[key];
+  }
+}

@@ -165,11 +165,27 @@ expect(button).toHaveClass('disabled')
 Error: Expected button to have class "disabled"
 ```
 
+#### `.toHaveState({...state})`
+Asserts a component contains the state you expect.
+
+```js
+// Throws if either property is different.
+expect(counter).toHaveState({
+  isActive: true,
+  clickCount: 3,
+})
+```
+
+##### Error
+
+```plain
+Error: Expected state "count" to equal 5
+```
+
 ## Roadmap
 There are more methods to augment:
 
 - `.toContain(selector)`
-- `.toHaveState(object)`
 - `.toHaveContext(object)`
 - `.toHaveStyle(name, value)`
 - `.toHaveStyles(object)`

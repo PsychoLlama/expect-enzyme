@@ -202,22 +202,28 @@ export function toHaveStyle (property, value) {
   const style = element.prop('style') || {};
   const displayName = element.name();
 
-  expect.assert(
-    property in style,
-    `Expected ${displayName} to have css property "${property}"`
-  );
+  // "value" parameter is optional.
+  if (value === undefined) {
 
-  if (value !== undefined) {
+    // Make sure the property is specified.
+    expect.assert(
+      style.hasOwnProperty(property),
+      `Expected ${displayName} to have css property "${property}"`
+    );
+
+  } else {
 
     // Show what css is expected.
     const styleString = stringifyObject({ [property]: value }, {
       inlineCharacterLimit: Infinity,
     });
 
+    // Make sure the value matches.
     expect.assert(
       style[property] === value,
       `Expected ${displayName} to have css ${styleString}`
     );
+
   }
 }
 

@@ -248,10 +248,13 @@ export function toHaveContext (context) {
 
   Object.keys(context).forEach((property) => {
     const expected = context[property];
+    const expectedString = stringifyObject(expected, {
+      inlineCharacterLimit: Infinity,
+    });
 
     expect.assert(
       deepEqual(actual[property], expected),
-      `Expected context property "${property}" to equal ${expected}`
+      `Expected context property "${property}" to equal ${expectedString}`
     );
   });
 

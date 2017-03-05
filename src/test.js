@@ -331,6 +331,15 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow();
     });
 
+    it('shows stringifies the expected object for error messages', () => {
+      const assertion = () => expect(element).toHaveContext({
+        data: { stringify: 'me' },
+      });
+
+      expect(assertion).toNotThrow(/object Object/);
+      expect(assertion).toThrow(/stringify.*?me/);
+    });
+
   });
 
   describe('method "toContain"', () => {

@@ -1,7 +1,7 @@
 /* eslint-disable require-jsdoc */
 /* eslint-env mocha */
-import { shallow } from 'enzyme';
 import React, { PropTypes } from 'react';
+import { shallow } from 'enzyme';
 
 import expect from 'expect';
 

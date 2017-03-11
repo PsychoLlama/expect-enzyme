@@ -51,6 +51,16 @@ const stringifySelector = (selector) => {
 const asserted = expect();
 
 const original = {
+
+  // Custom.
+  toHaveContext: asserted.toHaveContext,
+  toHaveClass: asserted.toHaveClass,
+  toHaveState: asserted.toHaveState,
+  toHaveProps: asserted.toHaveProps,
+  toHaveStyle: asserted.toHaveStyle,
+  toHaveProp: asserted.toHaveProp,
+
+  // Built-in.
   toNotContain: asserted.toNotContain,
   toNotExist: asserted.toNotExist,
   toContain: asserted.toContain,
@@ -75,12 +85,15 @@ const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
 
       // Use the enzyme assertion.
       enzymeAssertion.apply(this, arguments);
-
-      return this;
+    } else if (defaultAssertion) {
+      return defaultAssertion.apply(this, arguments);
     }
 
-    // Otherwise, use the built-in.
-    return defaultAssertion.apply(this, arguments);
+    // There's no fallback assertion.
+    assertIsEnzymeWrapper(this.actual);
+
+    // Chain 'em assertions.
+    return this;
   }
 );
 
@@ -90,103 +103,119 @@ const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
  * @param  {Any} [value] - An expected value.
  * @return {this} - The current expect assertion.
  */
-export function toHaveProp (prop, value) {
-  assertIsEnzymeWrapper(this.actual);
+export const toHaveProp = addEnzymeSupport(
+  original.toHaveProp,
 
-  const actual = this.actual.props();
-  const displayName = this.actual.name();
+  function (prop, value) {
+    assertIsEnzymeWrapper(this.actual);
 
-  expect.assert(
-    actual.hasOwnProperty(prop),
-    `Expected ${displayName} to have prop "${prop}"`
-  );
+    const actual = this.actual.props();
+    const displayName = this.actual.name();
 
-  if (value !== undefined) {
     expect.assert(
-      actual[prop] === value,
-      `Expected ${displayName} property "${prop}" to be "${value}"`
+      actual.hasOwnProperty(prop),
+      `Expected ${displayName} to have prop "${prop}"`
     );
-  }
 
-  return this;
-}
+    if (value !== undefined) {
+      expect.assert(
+        actual[prop] === value,
+        `Expected ${displayName} property "${prop}" to be "${value}"`
+      );
+    }
+
+    return this;
+  }
+);
 
 /**
  * Verifies a component was given certain props.
  * @param  {Object} props - Expected props.
  * @return {this} - The current assertion.
  */
-export function toHaveProps (props) {
+export const toHaveProps = addEnzymeSupport(
+  original.toHaveProps,
 
-  // Props should be an object.
-  expect.assert(
-    props instanceof Object,
-    `Method "toHaveProps()" expected a props object, was given "${props}"`
-  );
+  function (props) {
 
-  // Make sure we're dealing with an enzyme wrapper.
-  assertIsEnzymeWrapper(this.actual);
+    // Props should be an object.
+    expect.assert(
+      props instanceof Object,
+      `Method "toHaveProps()" expected a props object, was given "${props}"`
+    );
 
-  // Check each expected prop.
-  Object.keys(props).forEach((key) => {
-    const value = props[key];
+    // Make sure we're dealing with an enzyme wrapper.
+    assertIsEnzymeWrapper(this.actual);
 
-    // Assert!
-    this.toHaveProp(key, value);
-  });
+    // Check each expected prop.
+    Object.keys(props).forEach((key) => {
+      const value = props[key];
 
-  // For chaining.
-  return this;
-}
+      // Assert!
+      this.toHaveProp(key, value);
+    });
+
+    // For chaining.
+    return this;
+  }
+);
 
 /**
  * Asserts a component contains a css class.
  * @param  {String} className - The class the component should have.
  * @return {this} - The expectation context.
  */
-export function toHaveClass (className) {
-  const element = this.actual;
+export const toHaveClass = addEnzymeSupport(
+  original.toHaveClass,
 
-  // Only works for enzyme elements.
-  assertIsEnzymeWrapper(element);
+  function (className) {
+    const element = this.actual;
 
-  expect.assert(
-    element.hasClass(className),
-    `Expected ${element.name()} to have class "${className}"`
-  );
+    // Only works for enzyme elements.
+    assertIsEnzymeWrapper(element);
 
-  return this;
-}
+    expect.assert(
+      element.hasClass(className),
+      `Expected ${element.name()} to have class "${className}"`
+    );
+
+    return this;
+  }
+);
 
 /**
  * Assert the element contains the given state.
  * @param  {Object} expectedState - State the component should contain.
  * @return {this} - The expectation context.
  */
-export function toHaveState (expectedState) {
-  const element = this.actual;
-  assertIsEnzymeWrapper(element);
+export const toHaveState = addEnzymeSupport(
+  original.toHaveState,
 
-  // Make sure the expected state is valid.
-  expect.assert(
-    expectedState instanceof Object,
-    `expect(...).toHaveState expects an object, was given "${expectedState}"`
-  );
+  function (expectedState) {
+    const element = this.actual;
+    assertIsEnzymeWrapper(element);
 
-  // Check every property in the expected state.
-  Object.keys(expectedState).forEach((key) => {
-    const actual = element.state(key);
-    const expected = expectedState[key];
-
-    // Deeply check equivalence.
+    // Make sure the expected state is valid.
     expect.assert(
-      deepEqual(actual, expected),
-      `Expected state "${key}" to equal ${expected}`
+      expectedState instanceof Object,
+      `expect(...).toHaveState expects an object, was given "${expectedState}"`
     );
-  });
 
-  return this;
-}
+    // Check every property in the expected state.
+    Object.keys(expectedState).forEach((key) => {
+      const actual = element.state(key);
+      const expected = expectedState[key];
+
+      // Deeply check equivalence.
+      expect.assert(
+        deepEqual(actual, expected),
+        `Expected state "${key}" to equal ${expected}`
+      );
+    });
+
+    return this;
+  }
+);
 
 /**
  * Asserts a component contains a given style.
@@ -194,72 +223,80 @@ export function toHaveState (expectedState) {
  * @param  {Any} [value] - The expected CSS value.
  * @return {this} - The expectation context.
  */
-export function toHaveStyle (property, value) {
-  const element = this.actual;
-  assertIsEnzymeWrapper(element);
+export const toHaveStyle = addEnzymeSupport(
+  original.toHaveStyle,
 
-  const style = element.prop('style') || {};
-  const displayName = element.name();
+  function (property, value) {
+    const element = this.actual;
+    assertIsEnzymeWrapper(element);
 
-  const styles = property instanceof Object ? property : {
-    [property]: value,
-  };
+    const style = element.prop('style') || {};
+    const displayName = element.name();
 
-  Object.keys(styles).forEach((property) => {
-    const value = styles[property];
+    const styles = property instanceof Object ? property : {
+      [property]: value,
+    };
 
-    // "value" parameter is optional.
-    if (value === undefined) {
+    Object.keys(styles).forEach((property) => {
+      const value = styles[property];
 
-      // Make sure the property is specified.
-      expect.assert(
-        style.hasOwnProperty(property),
-        `Expected ${displayName} to have css property "${property}"`
-      );
+      // "value" parameter is optional.
+      if (value === undefined) {
 
-    } else {
+        // Make sure the property is specified.
+        expect.assert(
+          style.hasOwnProperty(property),
+          `Expected ${displayName} to have css property "${property}"`
+        );
 
-      // Show what css is expected.
-      const styleString = stringifyObject({ [property]: value }, {
-        inlineCharacterLimit: Infinity,
-      });
+      } else {
 
-      // Make sure the value matches.
-      expect.assert(
-        style[property] === value,
-        `Expected ${displayName} to have css ${styleString}`
-      );
-    }
-  });
+        // Show what css is expected.
+        const styleString = stringifyObject({ [property]: value }, {
+          inlineCharacterLimit: Infinity,
+        });
 
-  return this;
-}
+        // Make sure the value matches.
+        expect.assert(
+          style[property] === value,
+          `Expected ${displayName} to have css ${styleString}`
+        );
+      }
+    });
+
+    return this;
+  }
+);
 
 /**
  * Asserts a component has the given context.
  * @param  {Object} context - What you expect the context to equal.
  * @return {this} - The expectation context.
  */
-export function toHaveContext (context) {
-  const element = this.actual;
-  assertIsEnzymeWrapper(element);
+export const toHaveContext = addEnzymeSupport(
+  original.toHaveContext,
 
-  const actual = element.context();
+  function toHaveContext (context) {
+    const element = this.actual;
+    assertIsEnzymeWrapper(element);
 
-  Object.keys(context).forEach((property) => {
-    const expected = context[property];
-    const expectedString = stringifyObject(expected, {
-      inlineCharacterLimit: Infinity,
+    const actual = element.context();
+
+    Object.keys(context).forEach((property) => {
+      const expected = context[property];
+      const expectedString = stringifyObject(expected, {
+        inlineCharacterLimit: Infinity,
+      });
+
+      expect.assert(
+        deepEqual(actual[property], expected),
+        `Expected context property "${property}" to equal ${expectedString}`
+      );
     });
 
-    expect.assert(
-      deepEqual(actual[property], expected),
-      `Expected context property "${property}" to equal ${expectedString}`
-    );
-  });
-
-  return this;
-}
+    return this;
+  }
+);
 
 /**
  * Assert the type of an enzyme wrapper.

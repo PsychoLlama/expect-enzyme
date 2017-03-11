@@ -31,13 +31,19 @@ Error: Expected 0 to be 6
 I think we can improve.
 
 ## Why it's awesome
-This library teaches expect how to enzyme. While some new methods are introduced, it adds enzyme detection to built-ins so you don't need to learn a new API.
+This library teaches expect how to enzyme. It adds detection to built-ins, and extends it with new enzyme-specific assertions.
 
 For example:
 
 ```js
-expect(element).toBeAn('aside')
-// Error: Expected header to be an aside
+expect(element).toBeA('video')
+// Error: Expected div to be a video
+
+expect(leaderboard).toContain('HighScore')
+// Error: Expected element to contain "HighScore"
+
+expect(clickCounter).toHaveState({ clicks: 1 })
+// Error: Expected state "clicks" to equal 1
 ```
 
 You get the idea.
@@ -202,7 +208,7 @@ expect(counter).toHaveState({
 ##### Error
 
 ```plain
-Error: Expected state "count" to equal 5
+Error: Expected state "clickCount" to equal 3
 ```
 
 #### `.toContain(selector)`

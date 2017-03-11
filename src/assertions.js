@@ -351,7 +351,7 @@ export const toExist = addEnzymeSupport(
 
   function () {
     expect.assert(
-      this.actual.exists(),
+      this.actual.length > 0,
       'Expected element to exist'
     );
   }
@@ -365,10 +365,8 @@ export const toNotExist = addEnzymeSupport(
   original.toNotExist,
 
   function () {
-    const exists = this.actual.exists();
-
     expect.assert(
-      exists === false,
+      this.actual.length === 0,
       'Expected element to not exist'
     );
   }

@@ -571,6 +571,10 @@ describe('expect-enzyme', () => {
   });
 
   describe('method "toExist"', () => {
+    let element;
+    beforeEach(() => {
+      element = shallow(<div />);
+    });
 
     it('only operates on enzyme values', () => {
       expect(() => expect('stuff').toExist()).toNotThrow();
@@ -592,9 +596,21 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow();
     });
 
+    it('works in older versions of enzyme', () => {
+      element.exists = null;
+      const nope = element.find('Nope');
+
+      expect(() => expect(element).toExist()).toNotThrow();
+      expect(() => expect(nope).toExist()).toThrow();
+    });
+
   });
 
   describe('method "toNotExist"', () => {
+    let element;
+    beforeEach(() => {
+      element = shallow(<div />);
+    });
 
     it('should only affect enzyme types', () => {
       expect(() => expect(undefined).toNotExist()).toNotThrow();
@@ -614,6 +630,15 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element.find('Elvis')).toNotExist();
 
       expect(assertion).toNotThrow();
+    });
+
+    it('works in older versions of enzyme', () => {
+      const absent = element.find('Potato');
+      element.exists = null;
+      absent.exists = null;
+
+      expect(() => expect(absent).toNotExist()).toNotThrow();
+      expect(() => expect(element).toNotExist()).toThrow();
     });
 
   });

@@ -1,6 +1,6 @@
 import getDisplayName from 'react-display-name';
 import stringifyObject from 'stringify-object';
-import {ShallowWrapper} from 'enzyme';
+import {ShallowWrapper, ReactWrapper} from 'enzyme';
 import deepEqual from 'deep-eql';
 import expect from 'expect';
 
@@ -9,7 +9,10 @@ import expect from 'expect';
  * @param  {Any} actual - The value to check.
  * @return {Boolean} - Whether it's enzyme.
  */
-const isEnzymeWrapper = (actual) => actual instanceof ShallowWrapper;
+const isEnzymeWrapper = (actual) => (
+  actual instanceof ShallowWrapper ||
+    actual instanceof ReactWrapper
+);
 
 /**
  * Throws an error if the given argument isn't an enzyme wrapper.

@@ -1,7 +1,7 @@
 /* eslint-disable require-jsdoc */
 /* eslint-env mocha */
 import React, { PropTypes } from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import expect from 'expect';
 
@@ -614,6 +614,33 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element.find('Elvis')).toNotExist();
 
       expect(assertion).toNotThrow();
+    });
+
+  });
+
+  // Not all methods are tested with `enzyme.mount`,
+  // though enough to ensure nothing is terribly wrong.
+  describe('mounted wrapper', () => {
+    const element = mount(<audio className="playing" controls />);
+
+    it('works with "toBeA"', () => {
+      expect(() => expect(element).toBeAn('audio')).toNotThrow();
+      expect(() => expect(element).toBeA('section')).toThrow();
+    });
+
+    it('works with "toHaveClass"', () => {
+      expect(() => expect(element).toHaveClass('playing')).toNotThrow();
+      expect(() => expect(element).toHaveClass('naaaaah')).toThrow();
+    });
+
+    it('works with "toHaveProp"', () => {
+      expect(() => expect(element).toHaveProp('controls')).toNotThrow();
+      expect(() => expect(element).toHaveProp('bools')).toThrow();
+    });
+
+    it('works with "toExist"', () => {
+      expect(() => expect(element).toExist()).toNotThrow();
+      expect(() => expect(element.find('Yeti')).toExist()).toThrow();
     });
 
   });

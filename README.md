@@ -194,6 +194,20 @@ expect(button).toHaveClass('disabled')
 Error: Expected button to have class "disabled"
 ```
 
+#### `.toNotHaveClass(className)`
+Asserts a component does not contain a class name.
+
+```js
+// This account should be lame.
+expect(account).toNotHaveClass('premium-tier')
+```
+
+##### Error
+
+```plain
+Error: Expected button to not have class "disabled"
+```
+
 #### `.toHaveState({...state})`
 Asserts a component contains specific state.
 

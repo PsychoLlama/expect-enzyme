@@ -249,6 +249,11 @@ export const toHaveClass = addEnzymeSupport(
   }
 );
 
+/**
+ * Asserts a component does not have a class name.
+ * @param  {String} className - The class it really shouldn't have.
+ * @return {this} - The expectation context.
+ */
 export const toNotHaveClass = addEnzymeSupport(
   original.toNotHaveClass,
   negate('toHaveClass')

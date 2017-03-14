@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## Unreleased
+### Added
+- New `.toNotHaveClass(name)` assertion.
+
 ## v0.14.1
 ### Fixed
 - Call to unsupported method `.exists()` on old enzyme versions.

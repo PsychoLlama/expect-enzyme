@@ -5,6 +5,28 @@ import deepEqual from 'deep-eql';
 import expect from 'expect';
 
 /**
+ * Utility for asserting a statement is true.
+ * @throws {Error}
+ * @param  {Object} assertion - Assertion statements.
+ * @param  {Boolean} statement - Whether your expectation was met.
+ * @param  {String} msg - An error to throw if the statement fails.
+ * @return {undefined}
+ */
+const assert = ({
+  statement,
+  msg,
+}) => {
+
+  // The assertion passed.
+  if (statement) {
+    return;
+  }
+
+  // Nope, it failed.
+  throw new Error(msg);
+};
+
+/**
  * Checks if the given value is an enzyme wrapper.
  * @param  {Any} actual - The value to check.
  * @return {Boolean} - Whether it's enzyme.
@@ -20,10 +42,10 @@ const isEnzymeWrapper = (actual) => (
  * @return {undefined}
  * @throws {Error} - If the type isn't enzyme.
  */
-const assertIsEnzymeWrapper = (actual) => expect.assert(
-  isEnzymeWrapper(actual),
-  `${actual} is not an enzyme wrapper`
-);
+const assertIsEnzymeWrapper = (actual) => assert({
+  statement: isEnzymeWrapper(actual),
+  msg: `${actual} is not an enzyme wrapper`,
+});
 
 /**
  * Turns an enzyme selector into a printable string.
@@ -115,16 +137,16 @@ export const toHaveProp = addEnzymeSupport(
     const actual = this.actual.props();
     const displayName = this.actual.name();
 
-    expect.assert(
-      actual.hasOwnProperty(prop),
-      `Expected ${displayName} to have prop "${prop}"`
-    );
+    assert({
+      statement: actual.hasOwnProperty(prop),
+      msg: `Expected ${displayName} to have prop "${prop}"`,
+    });
 
     if (value !== undefined) {
-      expect.assert(
-        actual[prop] === value,
-        `Expected ${displayName} property "${prop}" to be "${value}"`
-      );
+      assert({
+        statement: actual[prop] === value,
+        msg: `Expected ${displayName} property "${prop}" to be "${value}"`,
+      });
     }
 
     return this;
@@ -142,10 +164,12 @@ export const toHaveProps = addEnzymeSupport(
   function (props) {
 
     // Props should be an object.
-    expect.assert(
-      props instanceof Object,
-      `Method "toHaveProps()" expected a props object, was given "${props}"`
-    );
+    assert({
+      statement: props instanceof Object,
+      msg: (
+        `Method "toHaveProps()" expected a props object, was given "${props}"`
+      ),
+    });
 
     // Make sure we're dealing with an enzyme wrapper.
     assertIsEnzymeWrapper(this.actual);
@@ -177,10 +201,10 @@ export const toHaveClass = addEnzymeSupport(
     // Only works for enzyme elements.
     assertIsEnzymeWrapper(element);
 
-    expect.assert(
-      element.hasClass(className),
-      `Expected ${element.name()} to have class "${className}"`
-    );
+    assert({
+      statement: element.hasClass(className),
+      msg: `Expected ${element.name()} to have class "${className}"`,
+    });
 
     return this;
   }
@@ -199,10 +223,11 @@ export const toHaveState = addEnzymeSupport(
     assertIsEnzymeWrapper(element);
 
     // Make sure the expected state is valid.
-    expect.assert(
-      expectedState instanceof Object,
-      `expect(...).toHaveState expects an object, was given "${expectedState}"`
-    );
+    assert({
+      statement: expectedState instanceof Object,
+      msg: 'expect(...).toHaveState expects an object,' +
+        ` was given "${expectedState}"`,
+    });
 
     // Check every property in the expected state.
     Object.keys(expectedState).forEach((key) => {
@@ -210,10 +235,10 @@ export const toHaveState = addEnzymeSupport(
       const expected = expectedState[key];
 
       // Deeply check equivalence.
-      expect.assert(
-        deepEqual(actual, expected),
-        `Expected state "${key}" to equal ${expected}`
-      );
+      assert({
+        statement: deepEqual(actual, expected),
+        msg: `Expected state "${key}" to equal ${expected}`,
+      });
     });
 
     return this;
@@ -247,10 +272,10 @@ export const toHaveStyle = addEnzymeSupport(
       if (value === undefined) {
 
         // Make sure the property is specified.
-        expect.assert(
-          style.hasOwnProperty(property),
-          `Expected ${displayName} to have css property "${property}"`
-        );
+        assert({
+          statement: style.hasOwnProperty(property),
+          msg: `Expected ${displayName} to have css property "${property}"`,
+        });
 
       } else {
 
@@ -260,10 +285,10 @@ export const toHaveStyle = addEnzymeSupport(
         });
 
         // Make sure the value matches.
-        expect.assert(
-          style[property] === value,
-          `Expected ${displayName} to have css ${styleString}`
-        );
+        assert({
+          statement: style[property] === value,
+          msg: `Expected ${displayName} to have css ${styleString}`,
+        });
       }
     });
 
@@ -291,10 +316,11 @@ export const toHaveContext = addEnzymeSupport(
         inlineCharacterLimit: Infinity,
       });
 
-      expect.assert(
-        deepEqual(actual[property], expected),
-        `Expected context property "${property}" to equal ${expectedString}`
-      );
+      assert({
+        statement: deepEqual(actual[property], expected),
+        msg: 'Expected context property' +
+          ` "${property}" to equal ${expectedString}`,
+      });
     });
 
     return this;
@@ -317,10 +343,10 @@ export const toBeA = addEnzymeSupport(
     const { article = 'a' } = this;
 
     // Check the type.
-    expect.assert(
-      element.is(type),
-      `Expected ${element.name()} to be ${article} ${displayName}`
-    );
+    assert({
+      statement: element.is(type),
+      msg: `Expected ${element.name()} to be ${article} ${displayName}`,
+    });
   }
 );
 
@@ -350,10 +376,10 @@ export const toExist = addEnzymeSupport(
   original.toExist,
 
   function () {
-    expect.assert(
-      this.actual.length > 0,
-      'Expected element to exist'
-    );
+    assert({
+      statement: this.actual.length > 0,
+      msg: 'Expected element to exist',
+    });
   }
 );
 
@@ -365,10 +391,10 @@ export const toNotExist = addEnzymeSupport(
   original.toNotExist,
 
   function () {
-    expect.assert(
-      this.actual.length === 0,
-      'Expected element to not exist'
-    );
+    assert({
+      statement: this.actual.length === 0,
+      msg: 'Expected element to not exist',
+    });
   }
 );
 
@@ -387,10 +413,10 @@ export const toNotBeA = addEnzymeSupport(
 
     const { article = 'a' } = this;
 
-    expect.assert(
-      notEqual,
-      `Expected ${element.name()} to not be ${article} ${displayName}`
-    );
+    assert({
+      statement: notEqual,
+      msg: `Expected ${element.name()} to not be ${article} ${displayName}`,
+    });
   }
 );
 
@@ -427,10 +453,10 @@ export const toContain = addEnzymeSupport(
     const isContained = element.find(selector).exists();
     const stringSelector = stringifySelector(selector);
 
-    expect.assert(
-      isContained,
-      `Expected element to contain "${stringSelector}"`
-    );
+    assert({
+      statement: isContained,
+      msg: `Expected element to contain "${stringSelector}"`,
+    });
   }
 );
 
@@ -449,9 +475,9 @@ export const toNotContain = addEnzymeSupport(
     const isContained = element.find(selector).exists();
     const stringSelector = stringifySelector(selector);
 
-    expect.assert(
-      isContained === false,
-      `Expected element to not contain "${stringSelector}"`
-    );
+    assert({
+      statement: isContained === false,
+      msg: `Expected element to not contain "${stringSelector}"`,
+    });
   }
 );

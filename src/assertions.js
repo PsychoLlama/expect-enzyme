@@ -113,6 +113,7 @@ const asserted = expect();
 const original = {
 
   // Custom.
+  toNotHaveClass: asserted.toNotHaveClass,
   toHaveContext: asserted.toHaveContext,
   toHaveClass: asserted.toHaveClass,
   toHaveState: asserted.toHaveState,
@@ -237,12 +238,20 @@ export const toHaveClass = addEnzymeSupport(
     assertIsEnzymeWrapper(element);
 
     assert({
+      ctx: this,
       statement: element.hasClass(className),
-      msg: `Expected ${element.name()} to have class "${className}"`,
+      msg: (not) => (
+        `Expected ${element.name()} to ${not}have class "${className}"`
+      ),
     });
 
     return this;
   }
+);
+
+export const toNotHaveClass = addEnzymeSupport(
+  original.toNotHaveClass,
+  negate('toHaveClass')
 );
 
 /**

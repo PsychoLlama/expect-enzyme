@@ -79,7 +79,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
-
   });
 
   describe('method "toHaveProp"', () => {
@@ -117,7 +116,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toThrow(/enzyme wrapper/i);
     });
-
   });
 
   describe('method "toHaveClass"', () => {
@@ -147,7 +145,22 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+  });
 
+  describe('method "toNotHaveClass"', () => {
+    const element = shallow(<div className="profile" />);
+
+    it('throws if the class is contained', () => {
+      const assertion = () => expect(element).toNotHaveClass('profile');
+
+      expect(assertion).toThrow(/profile/);
+    });
+
+    it('does not throw if the class is missing', () => {
+      const assertion = () => expect(element).toNotHaveClass('elvis');
+
+      expect(assertion).toNotThrow();
+    });
   });
 
   describe('method "toHaveState"', () => {
@@ -215,7 +228,6 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
-
   });
 
   describe('method "toHaveStyle"', () => {
@@ -284,7 +296,6 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
-
   });
 
   describe('method "toHaveContext"', () => {
@@ -339,7 +350,6 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
     });
-
   });
 
   describe('method "toContain"', () => {
@@ -388,7 +398,6 @@ describe('expect-enzyme', () => {
 
       expect(() => expect(element).toContain({ enabled: false })).toThrow();
     });
-
   });
 
   describe('method "toNotContain"', () => {
@@ -424,7 +433,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
-
   });
 
   describe('method "toBeA"', () => {
@@ -477,7 +485,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
-
   });
 
   describe('method "toBeAn"', () => {
@@ -513,7 +520,6 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
-
   });
 
   describe('method "toNotBeA"', () => {
@@ -547,7 +553,6 @@ describe('expect-enzyme', () => {
       expect(() => expect(component).toNotBeA(Component)).toThrow();
       expect(() => expect(element).toNotBeA(Component)).toNotThrow();
     });
-
   });
 
   describe('method "toNotBeAn"', () => {
@@ -567,7 +572,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
-
   });
 
   describe('method "toExist"', () => {
@@ -603,7 +607,6 @@ describe('expect-enzyme', () => {
       expect(() => expect(element).toExist()).toNotThrow();
       expect(() => expect(nope).toExist()).toThrow();
     });
-
   });
 
   describe('method "toNotExist"', () => {
@@ -650,7 +653,6 @@ describe('expect-enzyme', () => {
       // Asserts the negation flag was removed before throwing.
       expect(() => expectation.toExist()).toNotThrow();
     });
-
   });
 
   // Not all methods are tested with `enzyme.mount`,
@@ -677,7 +679,5 @@ describe('expect-enzyme', () => {
       expect(() => expect(element).toExist()).toNotThrow();
       expect(() => expect(element.find('Yeti')).toExist()).toThrow();
     });
-
   });
-
 });

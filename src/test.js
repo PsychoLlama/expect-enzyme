@@ -641,6 +641,16 @@ describe('expect-enzyme', () => {
       expect(() => expect(element).toNotExist()).toThrow();
     });
 
+    it('only negates the given assertion', () => {
+      const expectation = expect(element);
+      const assertion = () => expectation.toNotExist();
+
+      expect(assertion).toThrow();
+
+      // Asserts the negation flag was removed before throwing.
+      expect(() => expectation.toExist()).toNotThrow();
+    });
+
   });
 
   // Not all methods are tested with `enzyme.mount`,

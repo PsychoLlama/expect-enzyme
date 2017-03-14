@@ -4,26 +4,61 @@ import {ShallowWrapper, ReactWrapper} from 'enzyme';
 import deepEqual from 'deep-eql';
 import expect from 'expect';
 
+// Used to detect if an assertion is negated.
+const NEGATION_FLAG = 'enzyme-assertion-is-negated';
+
 /**
  * Utility for asserting a statement is true.
  * @throws {Error}
  * @param  {Object} assertion - Assertion statements.
  * @param  {Boolean} statement - Whether your expectation was met.
  * @param  {String} msg - An error to throw if the statement fails.
+ * @param  {Expectation} [ctx] - The current `this` value.
  * @return {undefined}
  */
 const assert = ({
   statement,
+  ctx = {},
   msg,
 }) => {
 
+  // Detect negated assertions.
+  const negated = ctx[NEGATION_FLAG];
+  const correct = Boolean(negated ? !statement : statement);
+
   // The assertion passed.
-  if (statement) {
+  if (correct) {
     return;
   }
 
+  // Aids in formatting negation error messages.
+  const not = negated ? 'not ' : '';
+
+  // Support error expressions.
+  const details = msg instanceof Function ? msg(not) : msg;
+
   // Nope, it failed.
-  throw new Error(msg);
+  throw new Error(details);
+};
+
+/**
+ * Decorator - sets a negation flag before invoking an assertion.
+ * @param  {String} methodName - The name of the assertion to invert.
+ * @return {Function} - To be used as the assertion.
+ */
+const negate = (methodName) => function () {
+  this[NEGATION_FLAG] = true;
+  const assertion = this[methodName];
+
+  try {
+    assertion.apply(this, arguments);
+  } catch (error) {
+    throw error;
+  } finally {
+
+    // Removes the flag, regardless of outcome.
+    delete this[NEGATION_FLAG];
+  }
 };
 
 /**
@@ -344,8 +379,11 @@ export const toBeA = addEnzymeSupport(
 
     // Check the type.
     assert({
+      ctx: this,
       statement: element.is(type),
-      msg: `Expected ${element.name()} to be ${article} ${displayName}`,
+      msg: (not) => (
+        `Expected ${element.name()} to ${not}be ${article} ${displayName}`
+      ),
     });
   }
 );
@@ -377,8 +415,9 @@ export const toExist = addEnzymeSupport(
 
   function () {
     assert({
+      ctx: this,
       statement: this.actual.length > 0,
-      msg: 'Expected element to exist',
+      msg: (not) => `Expected element to ${not}exist`,
     });
   }
 );
@@ -389,13 +428,7 @@ export const toExist = addEnzymeSupport(
  */
 export const toNotExist = addEnzymeSupport(
   original.toNotExist,
-
-  function () {
-    assert({
-      statement: this.actual.length === 0,
-      msg: 'Expected element to not exist',
-    });
-  }
+  negate('toExist')
 );
 
 /**
@@ -405,19 +438,7 @@ export const toNotExist = addEnzymeSupport(
  */
 export const toNotBeA = addEnzymeSupport(
   original.toNotBeA,
-
-  function (type) {
-    const element = this.actual;
-    const notEqual = !element.is(type);
-    const displayName = getDisplayName(type);
-
-    const { article = 'a' } = this;
-
-    assert({
-      statement: notEqual,
-      msg: `Expected ${element.name()} to not be ${article} ${displayName}`,
-    });
-  }
+  negate('toBeA')
 );
 
 /**
@@ -427,7 +448,6 @@ export const toNotBeA = addEnzymeSupport(
  */
 export const toNotBeAn = addEnzymeSupport(
   original.toNotBeAn,
-
   function (type) {
 
     // Correct grammar.
@@ -450,12 +470,13 @@ export const toContain = addEnzymeSupport(
   function (selector) {
     const element = this.actual;
 
-    const isContained = element.find(selector).exists();
+    const isContained = element.find(selector).length > 0;
     const stringSelector = stringifySelector(selector);
 
     assert({
+      ctx: this,
       statement: isContained,
-      msg: `Expected element to contain "${stringSelector}"`,
+      msg: (not) => `Expected element to ${not}contain "${stringSelector}"`,
     });
   }
 );
@@ -468,16 +489,5 @@ export const toContain = addEnzymeSupport(
  */
 export const toNotContain = addEnzymeSupport(
   original.toNotContain,
-
-  function (selector) {
-    const element = this.actual;
-
-    const isContained = element.find(selector).exists();
-    const stringSelector = stringifySelector(selector);
-
-    assert({
-      statement: isContained === false,
-      msg: `Expected element to not contain "${stringSelector}"`,
-    });
-  }
+  negate('toContain')
 );

@@ -31,7 +31,7 @@
     "react": "13.0.0 - 15.x.x",
     "react-display-name": "^0.2.0",
     "react-dom": "13.0.0 - 15.x.x",
-    "stringify-object": "^3.1.0"
+    "stringify-object": "^3.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",

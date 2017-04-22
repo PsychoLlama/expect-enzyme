@@ -348,6 +348,58 @@ describe('expect-enzyme', () => {
     });
   });
 
+  describe('toNotHaveStyle()', () => {
+    const element = shallow(
+      <div style={{
+        color: 'orange',
+      }} />
+    );
+
+    it('passes if the color does not exist', () => {
+      const assertion = () => expect(element).toNotHaveStyle('transition');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the style exists', () => {
+      const assertion = () => expect(element).toNotHaveStyle('color');
+
+      expect(assertion).toThrow();
+    });
+
+    it('passes if the style is different', () => {
+      const expectation = expect(element);
+      const assertion = () => expectation.toNotHaveStyle('color', 'crimson');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the style matches', () => {
+      const assertion = () => expect(element).toNotHaveStyle('color', 'orange');
+
+      expect(assertion).toThrow(/color/);
+    });
+
+    it('passes if no styles match', () => {
+      const assertion = () => expect(element).toNotHaveStyle({
+        backgroundColor: 'turquoise',
+        color: 'not orange',
+        borderWidth: 2,
+      });
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if any styles match', () => {
+      const assertion = () => expect(element).toNotHaveStyle({
+        backgroundColor: 'turquoise',
+        color: 'orange',
+      });
+
+      expect(assertion).toThrow(/color/);
+    });
+  });
+
   describe('toHaveContext()', () => {
     const Component = () => <div />;
 

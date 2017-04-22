@@ -120,6 +120,7 @@ const asserted = expect();
 const original = {
 
   // Custom.
+  toNotHaveStyle: asserted.toNotHaveStyle,
   toNotHaveClass: asserted.toNotHaveClass,
   toNotHaveProps: asserted.toNotHaveProps,
   toNotHaveProp: asserted.toNotHaveProp,
@@ -359,8 +360,11 @@ export const toHaveStyle = addEnzymeSupport(
 
         // Make sure the property is specified.
         assert({
+          ctx: this,
           statement: style.hasOwnProperty(property),
-          msg: `Expected ${displayName} to have css property "${property}"`,
+          msg: (not) => (
+            `Expected ${displayName} to ${not}have css property "${property}"`
+          ),
         });
 
       } else {
@@ -372,14 +376,29 @@ export const toHaveStyle = addEnzymeSupport(
 
         // Make sure the value matches.
         assert({
+          ctx: this,
           statement: style[property] === value,
-          msg: `Expected ${displayName} to have css ${styleString}`,
+          msg: (not) => (
+            `Expected ${displayName} to ${not}have css ${styleString}`
+          ),
         });
       }
     });
 
     return this;
   }
+);
+
+/**
+ * Asserts an element does not have a set of styles.
+ * @param  {String|Object} name - Either an object of styles
+ * or the name of a style property.
+ * @param  {Any} [value] - The style it shouldn't be.
+ * @return {this} - The expectation context.
+ */
+export const toNotHaveStyle = addEnzymeSupport(
+  original.toNotHaveStyle,
+  negate('toHaveStyle')
 );
 
 /**

@@ -26,7 +26,7 @@ describe('expect-enzyme', () => {
     expect(expect().toHaveProp).toBeA(Function);
   });
 
-  describe('method "toHaveProps"', () => {
+  describe('toHaveProps()', () => {
     const createAssertion = (props, el = element) => () => {
       expect(el).toHaveProps(props);
     };
@@ -81,7 +81,29 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toHaveProp"', () => {
+  describe('toNotHaveProps()', () => {
+    const element = shallow(<button disabled />);
+
+    it('throws if any value matches', () => {
+      const assertion = () => expect(element).toNotHaveProps({
+        missing: 'intentionally so',
+        disabled: true,
+      });
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not throw if all props are missing', () => {
+      const assertion = () => expect(element).toNotHaveProps({
+        pool: 'closed',
+        clowns: 10,
+      });
+
+      expect(assertion).toNotThrow();
+    });
+  });
+
+  describe('toHaveProp()', () => {
     const createAssertion = (prop, val) => () => {
       expect(element).toHaveProp(prop, val);
     };
@@ -118,7 +140,35 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toHaveClass"', () => {
+  describe('toNotHaveProp()', () => {
+    const element = shallow(<div disabled value="offline" />);
+
+    it('throws if the prop exists', () => {
+      const assertion = () => expect(element).toNotHaveProp('disabled');
+
+      expect(assertion).toThrow(/disabled/);
+    });
+
+    it('does not throw if the prop is missing', () => {
+      const assertion = () => expect(element).toNotHaveProp('potato');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('does not throw if the value is different', () => {
+      const assertion = () => expect(element).toNotHaveProp('value', 'no');
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the value matches', () => {
+      const assertion = () => expect(element).toNotHaveProp('value', 'offline');
+
+      expect(assertion).toThrow(/value/);
+    });
+  });
+
+  describe('toHaveClass()', () => {
     const element = shallow(<div className="class-one classTwo class_three" />);
 
     it('throws if actual is not an enzyme wrapper', () => {
@@ -147,7 +197,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toNotHaveClass"', () => {
+  describe('toNotHaveClass()', () => {
     const element = shallow(<div className="profile" />);
 
     it('throws if the class is contained', () => {
@@ -163,7 +213,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toHaveState"', () => {
+  describe('toHaveState()', () => {
     // Must be a stateful component.
     class Element extends React.Component {
       constructor () {
@@ -230,7 +280,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toHaveStyle"', () => {
+  describe('toHaveStyle()', () => {
     const style = { color: 'blue', transition: 'color 1s' };
     const element = shallow(
       <div style={style} />
@@ -298,7 +348,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toHaveContext"', () => {
+  describe('toHaveContext()', () => {
     const Component = () => <div />;
 
     // React requires this to be specified, or context won't work.
@@ -352,7 +402,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toContain"', () => {
+  describe('toContain()', () => {
     const Component = () => <div />;
     const element = shallow(
       <div>
@@ -400,7 +450,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toNotContain"', () => {
+  describe('toNotContain()', () => {
     const Component = () => <div />;
     const element = shallow(
       <div>
@@ -435,7 +485,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toBeA"', () => {
+  describe('toBeA()', () => {
     const createElement = (type) => shallow(React.createElement(type));
     const Child = () => <div>Nested component</div>;
     const Composite = () => <div><Child /></div>;
@@ -487,7 +537,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toBeAn"', () => {
+  describe('toBeAn()', () => {
     const element = shallow(<aside />);
 
     it('throws the correct grammar article form', () => {
@@ -522,7 +572,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toNotBeA"', () => {
+  describe('toNotBeA()', () => {
     const element = shallow(<header />);
 
     it('throws if the type matches', () => {
@@ -555,7 +605,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toNotBeAn"', () => {
+  describe('toNotBeAn()', () => {
     const Item = () => <div />;
     const element = shallow(<div><Item /></div>);
     const item = element.find('Item');
@@ -574,7 +624,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toExist"', () => {
+  describe('toExist()', () => {
     let element;
     beforeEach(() => {
       element = shallow(<div />);
@@ -609,7 +659,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('method "toNotExist"', () => {
+  describe('toNotExist()', () => {
     let element;
     beforeEach(() => {
       element = shallow(<div />);

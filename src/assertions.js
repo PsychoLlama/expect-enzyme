@@ -8,6 +8,13 @@ import expect from 'expect';
 const NEGATION_FLAG = 'enzyme-assertion-is-negated';
 
 /**
+ * Returns whether the assertion is negated.
+ * @param  {Expectation} ctx - The assertion context.
+ * @return {Boolean} - Whether the assertion is negated.
+ */
+const isNegated = (ctx) => Boolean(ctx[NEGATION_FLAG]);
+
+/**
  * Utility for asserting a statement is true.
  * @throws {Error}
  * @param  {Object} assertion - Assertion statements.
@@ -23,7 +30,7 @@ const assert = ({
 }) => {
 
   // Detect negated assertions.
-  const negated = ctx[NEGATION_FLAG];
+  const negated = isNegated(ctx);
   const correct = Boolean(negated ? !statement : statement);
 
   // The assertion passed.
@@ -68,7 +75,7 @@ const negate = (methodName) => function () {
  */
 const isEnzymeWrapper = (actual) => (
   actual instanceof ShallowWrapper ||
-    actual instanceof ReactWrapper
+  actual instanceof ReactWrapper
 );
 
 /**
@@ -114,6 +121,8 @@ const original = {
 
   // Custom.
   toNotHaveClass: asserted.toNotHaveClass,
+  toNotHaveProps: asserted.toNotHaveProps,
+  toNotHaveProp: asserted.toNotHaveProp,
   toHaveContext: asserted.toHaveContext,
   toHaveClass: asserted.toHaveClass,
   toHaveState: asserted.toHaveState,
@@ -161,7 +170,7 @@ const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
 /**
  * Assert a component has a property.
  * @param  {String} prop - An expected property.
- * @param  {Any} [value] - An expected value.
+ * @param  {Any} [value=true] - An expected value.
  * @return {this} - The current expect assertion.
  */
 export const toHaveProp = addEnzymeSupport(
@@ -173,20 +182,38 @@ export const toHaveProp = addEnzymeSupport(
     const actual = this.actual.props();
     const displayName = this.actual.name();
 
-    assert({
-      statement: actual.hasOwnProperty(prop),
-      msg: `Expected ${displayName} to have prop "${prop}"`,
-    });
+    if (!isNegated(this) || value === undefined) {
+      assert({
+        ctx: this,
+        statement: actual.hasOwnProperty(prop),
+        msg: (not) => `Expected ${displayName} to ${not}have prop "${prop}"`,
+      });
+    }
 
     if (value !== undefined) {
       assert({
+        ctx: this,
         statement: actual[prop] === value,
-        msg: `Expected ${displayName} property "${prop}" to be "${value}"`,
+        msg: (not) => (
+          `Expected ${displayName} property "${prop}" to ${not}be "${value}"`
+        ),
       });
     }
 
     return this;
   }
+);
+
+/**
+ * Asserts an element doesn't match the given prop. If no
+ * value is specified, it asserts the prop doesn't exist at all.
+ * @param  {String} prop - The expected prop.
+ * @param  {Any} [value] - The value it shouldn't be.
+ * @return {this} - The expectation context.
+ */
+export const toNotHaveProp = addEnzymeSupport(
+  original.toNotHaveProp,
+  negate('toHaveProp')
 );
 
 /**
@@ -221,6 +248,16 @@ export const toHaveProps = addEnzymeSupport(
     // For chaining.
     return this;
   }
+);
+
+/**
+ * Assert an element does not contain a set of props.
+ * @param  {Object} props - All the props which should not be contained.
+ * @return {this} - The expectation context.
+ */
+export const toNotHaveProps = addEnzymeSupport(
+  original.toNotHaveProps,
+  negate('toHaveProps')
 );
 
 /**

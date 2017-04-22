@@ -280,6 +280,43 @@ describe('expect-enzyme', () => {
     });
   });
 
+  describe('toNotHaveState()', () => {
+    class Element extends React.Component {
+      constructor () {
+        super();
+
+        this.state = {
+          hovering: false,
+          theme: 'dark',
+        };
+      }
+
+      render () {
+        return <div />;
+      }
+    }
+
+    const element = shallow(<Element />);
+
+    it('passes if the state is different', () => {
+      const assertion = () => expect(element).toNotHaveState({
+        missing: 'property',
+        hovering: true,
+      });
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if any state matches', () => {
+      const assertion = () => expect(element).toNotHaveState({
+        hovering: false,
+        theme: 'light',
+      });
+
+      expect(assertion).toThrow(/state/);
+    });
+  });
+
   describe('toHaveStyle()', () => {
     const style = { color: 'blue', transition: 'color 1s' };
     const element = shallow(

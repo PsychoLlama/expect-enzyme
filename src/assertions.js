@@ -123,6 +123,7 @@ const original = {
   toNotHaveStyle: asserted.toNotHaveStyle,
   toNotHaveClass: asserted.toNotHaveClass,
   toNotHaveProps: asserted.toNotHaveProps,
+  toNotHaveState: asserted.toNotHaveState,
   toNotHaveProp: asserted.toNotHaveProp,
   toHaveContext: asserted.toHaveContext,
   toHaveClass: asserted.toHaveClass,
@@ -323,13 +324,24 @@ export const toHaveState = addEnzymeSupport(
 
       // Deeply check equivalence.
       assert({
+        ctx: this,
         statement: deepEqual(actual, expected),
-        msg: `Expected state "${key}" to equal ${expected}`,
+        msg: (not) => `Expected state "${key}" to ${not}equal ${expected}`,
       });
     });
 
     return this;
   }
+);
+
+/**
+ * Asserts a component does not contain the given state.
+ * @param  {Object} state - State it should definitely not contain.
+ * @return {this} - The expectation context.
+ */
+export const toNotHaveState = addEnzymeSupport(
+  original.toNotHaveState,
+  negate('toHaveState')
 );
 
 /**

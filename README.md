@@ -280,6 +280,8 @@ Error: Expected Dialog to have css property "transition"
 Error: Expected Marquee to have css {fontFamily: 'comic-sans'}
 ```
 
+> Negation: `.toNotHaveStyle()`
+
 #### `.toHaveContext({...context})`
 Asserts the component contains the given context.
 

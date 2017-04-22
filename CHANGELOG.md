@@ -6,6 +6,7 @@
 - New `.toNotHaveClass(name)` assertion.
 - New `.toNotHaveProp(name, value)` assertion.
 - New `.toNotHaveProps(props)` assertion.
+- New `.toNotHaveStyle(styles)` assertion.
 
 ## v0.14.1
 ### Fixed

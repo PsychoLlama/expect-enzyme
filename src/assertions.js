@@ -120,6 +120,7 @@ const asserted = expect();
 const original = {
 
   // Custom.
+  toNotHaveContext: asserted.toNotHaveContext,
   toNotHaveStyle: asserted.toNotHaveStyle,
   toNotHaveClass: asserted.toNotHaveClass,
   toNotHaveProps: asserted.toNotHaveProps,
@@ -434,14 +435,22 @@ export const toHaveContext = addEnzymeSupport(
       });
 
       assert({
+        ctx: this,
         statement: deepEqual(actual[property], expected),
-        msg: 'Expected context property' +
-          ` "${property}" to equal ${expectedString}`,
+        msg: (not) => (
+          'Expected context property' +
+          ` "${property}" to ${not}equal ${expectedString}`
+        ),
       });
     });
 
     return this;
   }
+);
+
+export const toNotHaveContext = addEnzymeSupport(
+  original.toNotHaveContext,
+  negate('toHaveContext')
 );
 
 /**

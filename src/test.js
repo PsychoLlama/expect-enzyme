@@ -481,13 +481,47 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow();
     });
 
-    it('shows stringifies the expected object for error messages', () => {
+    it('shows the expected object for error messages', () => {
       const assertion = () => expect(element).toHaveContext({
         data: { stringify: 'me' },
       });
 
       expect(assertion).toNotThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
+    });
+  });
+
+  describe('toNotHaveContext()', () => {
+    const Component = () => <div />;
+
+    // React requires this to be specified, or context won't work.
+    Component.contextTypes = {
+      string: PropTypes.string,
+    };
+
+    const element = shallow(
+      <Component />,
+      {
+        context: { string: 'a tiny context variable' },
+      }
+    );
+
+    it('passes if the context is not contained', () => {
+      const assertion = () => expect(element).toNotHaveContext({
+        missing: 'not defined in the context types',
+      });
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('fails if the context type matches', () => {
+      const { string } = element.context();
+
+      const assertion = () => expect(element).toNotHaveContext({
+        string,
+      });
+
+      expect(assertion).toThrow(/context/);
     });
   });
 

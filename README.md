@@ -217,6 +217,8 @@ expect(counter).toHaveState({
 Error: Expected state "clickCount" to equal 3
 ```
 
+> Negation: `.toNotHaveState()`
+
 #### `.toContain(selector)`
 Asserts the component does contain the given selector.
 

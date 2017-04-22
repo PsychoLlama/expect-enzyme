@@ -8,6 +8,7 @@
 - New `.toNotHaveProps(props)` assertion.
 - New `.toNotHaveStyle(styles)` assertion.
 - New `.toNotHaveState(state)` assertion.
+- New `.toNotHaveContext(context)` assertion.
 
 ## v0.14.1
 ### Fixed

@@ -309,6 +309,8 @@ expect(element).toHaveContext({
 Error: Expected context property "state" to equal {value: 'maybe'}
 ```
 
+> Negation: `.toNotHaveContext()`
+
 ## Support
 :star: Please star this repository to maintain my unbounded ego.
 

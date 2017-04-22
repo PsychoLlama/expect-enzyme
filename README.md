@@ -166,6 +166,8 @@ Error: Expected div to have prop "disabled"
 Error: Expected User property "name" to be "l33t_hackzor"
 ```
 
+> Negation: `.toNotHaveProp()`
+
 #### `.toHaveProps({...props})`
 Asserts a component has a set of properties.
 
@@ -179,6 +181,8 @@ expect(button).toHaveProps({size: 'large', type: 'action'})
 ```plain
 Error: Expected Button to have prop "size"
 ```
+
+> Negation: `.toNotHaveProps()`
 
 #### `.toHaveClass(className)`
 Asserts a component contains a class name.
@@ -194,19 +198,7 @@ expect(button).toHaveClass('disabled')
 Error: Expected button to have class "disabled"
 ```
 
-#### `.toNotHaveClass(className)`
-Asserts a component does not contain a class name.
-
-```js
-// This account should be lame.
-expect(account).toNotHaveClass('premium-tier')
-```
-
-##### Error
-
-```plain
-Error: Expected button to not have class "disabled"
-```
+> Negation: `.toNotHaveClass()`
 
 #### `.toHaveState({...state})`
 Asserts a component contains specific state.

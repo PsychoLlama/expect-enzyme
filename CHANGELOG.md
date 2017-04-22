@@ -4,6 +4,8 @@
 ## Unreleased
 ### Added
 - New `.toNotHaveClass(name)` assertion.
+- New `.toNotHaveProp(name, value)` assertion.
+- New `.toNotHaveProps(props)` assertion.
 
 ## v0.14.1
 ### Fixed

@@ -1,7 +1,7 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
-## Unreleased
+## v0.15.0
 ### Added
 - New `.toNotHaveClass(name)` assertion.
 - New `.toNotHaveProp(name, value)` assertion.

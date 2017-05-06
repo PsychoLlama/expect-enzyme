@@ -74,8 +74,19 @@ expect.extend(enzymify)
 
 ## API
 
+- [Augmented](#augmented)
+- [Extensions](#extensions)
+
 ### Augmented
 These are the expect methods that understand enzyme with this plugin:
+
+- [.toBeA](#tobeatype)
+- [.toBeAn](#tobeatype)
+- [.toNotBeA](#tonotbeatype)
+- [.toNotBeAn](#tonotbeatype)
+- [.toExist](#toexist)
+- [.toNotExist](#tonotexist)
+
 
 #### `.toBeA(type)`
 Asserts a component is the given type.
@@ -147,6 +158,16 @@ Error: Expected element to not exist
 
 ### Extensions
 New methods added for `expect` assertions.
+
+- [.toHaveProp](#tohavepropname-value)
+- [.toHaveProps](#tohavepropsprops)
+- [.toHaveClass](#tohaveclassclassname)
+- [.toHaveState](#tohavestatestate)
+- [.toContain](#tocontainselector)
+- [.toNotContain](#tonotcontainselector)
+- [.toHaveStyle](#tohavestyleobject--property-value)
+- [.toHaveContext](#tohavecontextcontext)
+
 
 #### `.toHaveProp(name, [value])`
 Asserts a component was given a prop, and optionally specifies its value.

@@ -11,6 +11,7 @@ eslint.plugins = [
 ];
 
 eslint.env = {
+  mocha: true,
   node: true,
   es6: true,
 };

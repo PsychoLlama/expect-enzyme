@@ -39,10 +39,10 @@
     "babel-preset-react": "^6.24.1",
     "eslint": "^3.19.0",
     "eslint-config-llama": "^3.0.0",
-    "eslint-plugin-react": "^7.0.0",
-    "jsdom": "^10.1.0",
-    "mocha": "^3.3.0",
-    "prop-types": "^15.5.9",
+    "eslint-plugin-react": "^7.0.1",
+    "jsdom": "^11.0.0",
+    "mocha": "^3.4.1",
+    "prop-types": "^15.5.10",
     "react-addons-test-utils": "^15.5.1"
   }
 }

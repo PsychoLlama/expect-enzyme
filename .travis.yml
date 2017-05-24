@@ -3,8 +3,6 @@ script:
 - yarn run test
 - yarn run lint
 node_js:
-- 4
-- 5
 - 6
 - 7
 deploy:

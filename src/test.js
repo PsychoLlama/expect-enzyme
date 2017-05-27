@@ -1,9 +1,9 @@
 /* eslint-disable require-jsdoc */
+import expect, { createSpy } from 'expect';
 import { shallow, mount } from 'enzyme';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import expect from 'expect';
 
 import assertions from './index';
 
@@ -277,6 +277,51 @@ describe('expect-enzyme', () => {
       const result = expectation.toHaveState({});
 
       expect(result).toBe(expectation);
+    });
+  });
+
+  describe('toHaveRendered()', () => {
+    const clickHandler = createSpy();
+    const element = shallow(<footer onClick={clickHandler} />);
+
+    it('does not throw if the output matches', () => {
+      const assertion = () => expect(element).toHaveRendered(
+        <footer onClick={clickHandler} />
+      );
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the output is different', () => {
+      const assertion = () => expect(element).toHaveRendered(<div />);
+
+      expect(assertion).toThrow(/footer/i);
+    });
+
+    it('does not throw if props are equal', () => {
+      const object = {};
+      const element = shallow(<div style={object} />);
+      const assertion = () => expect(element).toHaveRendered(
+        <div style={{}} />
+      );
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if props are different', () => {
+      const style = {color: 'blue'};
+      const element = shallow(<div style={style} />);
+      const assertion = () => expect(element).toHaveRendered(
+        <div style={{color: 'red'}} />
+      );
+
+      expect(assertion).toThrow();
+    });
+
+    it('does not attempt to stringify non-elements', () => {
+      const assertion = () => expect(element).toHaveRendered(null);
+
+      expect(assertion).toThrow(/render/).toThrow(/null/);
     });
   });
 

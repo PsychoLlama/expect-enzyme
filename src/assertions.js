@@ -1,8 +1,10 @@
+import {ShallowWrapper, ReactWrapper} from 'enzyme';
+import elementToString from './element-to-string';
 import getDisplayName from 'react-display-name';
 import stringifyObject from 'stringify-object';
-import {ShallowWrapper, ReactWrapper} from 'enzyme';
 import deepEqual from 'deep-eql';
 import expect from 'expect';
+import React from 'react';
 
 // Used to detect if an assertion is negated.
 const NEGATION_FLAG = 'enzyme-assertion-is-negated';
@@ -121,6 +123,8 @@ const original = {
 
   // Custom.
   toNotHaveContext: asserted.toNotHaveContext,
+  toNotHaveRendered: asserted.toHaveRendered,
+  toHaveRendered: asserted.toHaveRendered,
   toNotHaveStyle: asserted.toNotHaveStyle,
   toNotHaveClass: asserted.toNotHaveClass,
   toNotHaveProps: asserted.toNotHaveProps,
@@ -343,6 +347,36 @@ export const toHaveState = addEnzymeSupport(
 export const toNotHaveState = addEnzymeSupport(
   original.toNotHaveState,
   negate('toHaveState')
+);
+
+/**
+ * Asserts a component matches the given element output.
+ * @param  {ReactElement} element - A valid react element.
+ * @return {this} - The expectation context.
+ */
+export const toHaveRendered = addEnzymeSupport(
+  original.toHaveRendered,
+
+  function (element) {
+    const { actual } = this;
+
+    const type = actual.type();
+    const name = typeof type === 'function' ? getDisplayName(type) : type;
+
+    assert({
+      ctx: this,
+      statement: actual.equals(element),
+      msg: () => {
+
+        // Show abbreviated element on one line.
+        const expectedString = React.isValidElement(element)
+          ? elementToString(element)
+          : `"${element}"`;
+
+        return `Expected ${name} to render ${expectedString}`;
+      },
+    });
+  }
 );
 
 /**

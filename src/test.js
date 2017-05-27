@@ -323,6 +323,74 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toThrow(/render/).toThrow(/null/);
     });
+
+    it('does not throw if both outputs are null', () => {
+      const Element = () => null;
+      const element = shallow(<Element />);
+      const assertion = () => expect(element).toHaveRendered(null);
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('indents the block if the element has props', () => {
+      const assertion = () => expect(element).toHaveRendered(
+        <button value="a value" />
+      );
+
+      expect(assertion).toThrow(/\n/);
+    });
+
+    it('does not indent if the value is primitive', () => {
+      const assertion = () => expect(element).toHaveRendered(null);
+
+      expect(assertion).toNotThrow(/\n/);
+    });
+
+    it('does not indent if the element has no props', () => {
+      const assertion = () => expect(element).toHaveRendered(<div />);
+
+      expect(assertion).toNotThrow(/\n/);
+    });
+
+    it('show a colon if split onto another line', () => {
+      const assertion = () => expect(element).toHaveRendered(
+        <button disabled />
+      );
+
+      expect(assertion).toThrow(/:/);
+    });
+
+    it('does not show a colon if on one line', () => {
+      const assertion = () => expect(element).toHaveRendered(null);
+
+      expect(assertion).toNotThrow(/:/);
+    });
+  });
+
+  describe('toNotHaveRendered()', () => {
+    const element = shallow(<button disabled value="Click me" />);
+
+    it('throws if the value matches', () => {
+      const Element = () => null;
+      const element = shallow(<Element />);
+      const assertion = () => expect(element).toNotHaveRendered(null);
+
+      expect(assertion).toThrow(/render/);
+    });
+
+    it('does not throw if the value is different', () => {
+      const assertion = () => expect(element).toNotHaveRendered(null);
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if all props match', () => {
+      const assertion = () => expect(element).toNotHaveRendered(
+        <button disabled value="Click me" />
+      );
+
+      expect(assertion).toThrow();
+    });
   });
 
   describe('toNotHaveState()', () => {

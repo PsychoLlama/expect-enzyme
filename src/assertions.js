@@ -366,17 +366,29 @@ export const toHaveRendered = addEnzymeSupport(
     assert({
       ctx: this,
       statement: actual.equals(element),
-      msg: () => {
+      msg: (not) => {
+
+        const isValidElement = React.isValidElement(element);
+        const hasProps = isValidElement && Object.keys(element.props).length;
 
         // Show abbreviated element on one line.
-        const expectedString = React.isValidElement(element)
+        const expectedString = isValidElement
           ? elementToString(element)
           : `"${element}"`;
 
-        return `Expected ${name} to render ${expectedString}`;
+        const indent = hasProps ? '\n\t' : '';
+        const colon = indent ? ':' : ' ';
+
+        return `Expected ${name} ${not}to render` +
+          `${colon}${indent}${expectedString}`;
       },
     });
   }
+);
+
+export const toNotHaveRendered = addEnzymeSupport(
+  original.toNotHaveRendered,
+  negate('toHaveRendered')
 );
 
 /**

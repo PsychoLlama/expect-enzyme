@@ -86,6 +86,8 @@ These are the expect methods that understand enzyme with this plugin:
 - [.toNotBeAn](#tonotbeatype)
 - [.toExist](#toexist)
 - [.toNotExist](#tonotexist)
+- [.toContain](#tocontainselector)
+- [.toNotContain](#tonotcontainselector)
 
 
 #### `.toBeA(type)`
@@ -156,6 +158,44 @@ expect(element.find('ErrorMessage')).toNotExist()
 Error: Expected element to not exist
 ```
 
+#### `.toContain(selector)`
+Asserts the component does contain the given selector.
+
+```js
+// This blog post should have a byline.
+expect(blogPost).toContain('article')
+
+// Works with components, too.
+expect(blogPost).toContain(AuthorByline)
+
+// And attribute selectors. But please don't.
+expect(blogPost).toContain({ commentsEnabled: true })
+```
+
+##### Error
+
+```plain
+Error: Expected element to contain "article"
+Error: Expected element to contain "AuthorByline"
+Error: Expected element to contain "{commentsEnabled: true}"
+```
+
+#### `.toNotContain(selector)`
+Asserts the component does not contain the given selector.
+
+> **Note:** accepts the same types as [`.toContain`](#tocontainselector)
+
+```js
+// This search should not have a search result.
+expect(search).toNotContain('SearchResult')
+```
+
+##### Error
+
+```plain
+Error: Expected element to not contain "SearchResult"
+```
+
 ### Extensions
 New methods added for `expect` assertions.
 
@@ -163,8 +203,7 @@ New methods added for `expect` assertions.
 - [.toHaveProps](#tohavepropsprops)
 - [.toHaveClass](#tohaveclassclassname)
 - [.toHaveState](#tohavestatestate)
-- [.toContain](#tocontainselector)
-- [.toNotContain](#tonotcontainselector)
+- [.toHaveRendered](#tohaverenderedelement)
 - [.toHaveStyle](#tohavestyleobject--property-value)
 - [.toHaveContext](#tohavecontextcontext)
 
@@ -240,43 +279,28 @@ Error: Expected state "clickCount" to equal 3
 
 > Negation: `.toNotHaveState()`
 
-#### `.toContain(selector)`
-Asserts the component does contain the given selector.
+#### `.toHaveRendered(element)`
+Asserts the component rendered the given value.
 
 ```js
-// This blog post should have a byline.
-expect(blogPost).toContain('article')
+// The first event looks exactly like this.
+expect(calendar.find('Event').first())
+  .toHaveRendered(<Event invites={invites} />)
 
-// Works with components, too.
-expect(blogPost).toContain(AuthorByline)
-
-// And attribute selectors. But please don't.
-expect(blogPost).toContain({ commentsEnabled: true })
+// This list should be empty.
+expect(listOfRegrets).toHaveRendered(null)
 ```
 
 ##### Error
 
 ```plain
-Error: Expected element to contain "article"
-Error: Expected element to contain "AuthorByline"
-Error: Expected element to contain "{commentsEnabled: true}"
+Error: Expected div to render:
+  <Event invites={Array[22]} />
+
+Error: Expected ul to render "null"
 ```
 
-#### `.toNotContain(selector)`
-Asserts the component does not contain the given selector.
-
-> **Note:** accepts the same types as [`.toContain`](#tocontainselector)
-
-```js
-// This search should not have a search result.
-expect(search).toNotContain('SearchResult')
-```
-
-##### Error
-
-```plain
-Error: Expected element to not contain "SearchResult"
-```
+> Negation: `.toNotHaveRendered()`
 
 #### `.toHaveStyle(Object || property, [value])`
 Asserts a component contains the given css. Specifying the value is optional.

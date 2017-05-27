@@ -1,6 +1,11 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v0.16.0
+### Added
+- New `.toHaveRendered()` assertion.
+- New `.toNotHaveRendered()` assertion.
+
 ## v0.15.0
 ### Added
 - New `.toNotHaveClass(name)` assertion.

@@ -1,3 +1,4 @@
+/* eslint-disable no-confusing-arrow */
 import getDisplayName from 'react-display-name';
 import React, { Children } from 'react';
 
@@ -69,6 +70,41 @@ const stringifyProps = (props) => (
 );
 
 /**
+ * Turns any children set into a screen-space friendly string.
+ * @param  {ReactElement} element - Any react element.
+ * @param  {String} propsString - The stringified element props.
+ * @return {String} - Space-friendly string representation of the children.
+ */
+const stringifyChildren = (element, propsString) => {
+  const children = Children.toArray(element.props.children);
+
+  // Assume all non-objects are primitive.
+  const primitives = children.filter((child) => (
+    typeof child !== 'object' || child === null
+  ));
+
+  const spaceRemains = propsString.length < 20;
+  const isPrimitive = children.length === primitives.length;
+  const content = primitives.join('');
+
+  // Find the furthest-most space character while being
+  // no more than 25 characters in.
+  const truncatePoint = content
+    .split('')
+    .map((char, index) => ({ char, index }))
+    .filter((entry) => entry.char === ' ')
+    .reduce((max, { index }) => index > 25 ? max : index, 0);
+
+  const visibleContent = content.length > 25
+    ? `${content.slice(0, truncatePoint)}...`
+    : content;
+
+  // Hide children if there isn't enough space left.
+  // somewhat guesswork involved.
+  return isPrimitive && spaceRemains ? visibleContent : '...';
+};
+
+/**
  * Turns an element into a string. Different from
  * `react-element-to-jsx-string` and `jsx-to-string`
  * since it renders on a single line (optimized for error messages).
@@ -80,9 +116,8 @@ export default function stringify (element) {
   const type = getDisplayName(element.type);
   const props = stringifyProps(element.props);
   const hasChildren = Children.count(element.props.children) > 0;
-
-  // Show an ellipsis if children are present.
-  const end = hasChildren ? `>...</${type}>` : ' />';
+  const children = stringifyChildren(element, props);
+  const end = hasChildren ? `>${children}</${type}>` : ' />';
 
   return `<${type}${props}${end}`;
 }

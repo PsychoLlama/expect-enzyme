@@ -51,7 +51,7 @@ describe('Element to string', () => {
 
   // This stringifier is about approximation, not exact precision.
   it('indicates there were children passed', () => {
-    const string = stringify(<div>yay, another jsx stringifier.</div>);
+    const string = stringify(<div><span /></div>);
 
     expect(string).toBe('<div>...</div>');
   });
@@ -131,6 +131,64 @@ describe('Element to string', () => {
     expect(string).toBe('<div value={<Potato>} />');
   });
 
+  it('shows children if there are no other props', () => {
+    const string = stringify(<button>Buy now</button>);
+
+    expect(string).toBe('<button>Buy now</button>');
+  });
+
+  it('shows primitive children', () => {
+    const string = stringify(<div>Clicked {4} times</div>);
+
+    expect(string).toBe('<div>Clicked 4 times</div>');
+  });
+
+  it('hides children if any are complex', () => {
+    const string = stringify(
+      <div>Text but then <i /> and more text later</div>
+    );
+
+    expect(string).toBe('<div>...</div>');
+  });
+
+  it('hides children if props take up too much space', () => {
+    const string1 = stringify(<button disabled>content</button>);
+    const string2 = stringify(<button disabled enabled>content</button>);
+    const string3 = stringify(<button potato disabled enabled>content</button>);
+
+    expect(string1).toBe('<button disabled>content</button>');
+    expect(string2).toBe('<button disabled enabled>content</button>');
+    expect(string3).toBe('<button potato disabled enabled>...</button>');
+  });
+
+  it('shows an ellipsis if text is too long', () => {
+    const string = stringify(
+      <div>
+        Hey check it out this is a string but with
+        like a huge amount of text why would anyone write
+        this much I sure have no idea. #regrets
+      </div>
+    );
+
+    expect(string).toBe('<div>Hey check it out this is...</div>');
+  });
+
+  it('does not show an ellipsis if text fits perfectly', () => {
+    const string = stringify(
+      <div>Exactly 25 letters long!!</div>
+    );
+
+    expect(string).toBe('<div>Exactly 25 letters long!!</div>');
+  });
+
+  it('truncates children at a good breaking point', () => {
+    const string = stringify(
+      <div>Exactly 25 characterslongloljustkidding</div>
+    );
+
+    expect(string).toBe('<div>Exactly 25...</div>');
+  });
+
   it('works', () => {
     const Element = () => <div />;
     function onAction () {}
@@ -141,7 +199,17 @@ describe('Element to string', () => {
         disabled={false}
         string="value"
         style={{}}
-      >Oh look children</Element>
+      >
+        <section>
+          <div>
+            <ol>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ol>
+          </div>
+        </section>
+      </Element>
     );
 
     expect(string).toBe(

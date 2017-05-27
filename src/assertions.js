@@ -351,7 +351,7 @@ export const toNotHaveState = addEnzymeSupport(
 
 /**
  * Asserts a component matches the given element output.
- * @param  {ReactElement} element - A valid react element.
+ * @param  {Any} element - A valid react element.
  * @return {this} - The expectation context.
  */
 export const toHaveRendered = addEnzymeSupport(
@@ -386,6 +386,11 @@ export const toHaveRendered = addEnzymeSupport(
   }
 );
 
+/**
+ * Asserts the given output doesn't match what your component rendered.
+ * @param  {Any} element - A react element (or null) you expect to not match.
+ * @return {this} - The expectation context.
+ */
 export const toNotHaveRendered = addEnzymeSupport(
   original.toNotHaveRendered,
   negate('toHaveRendered')

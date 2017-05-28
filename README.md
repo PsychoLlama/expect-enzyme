@@ -296,13 +296,13 @@ expect(stockAdvice).toHaveRendered(<button disabled={false}>Buy now!</button>)
 ##### Error
 
 ```plain
-Error: Expected div to render:
-  <Event invites={Array[22]} />
+Error: Expected element to equal:
+   <Event invites={Array[22]} />
 
-Error: Expected ul to render "null"
+Error: Expected element to equal "null"
 
-Error: Expected button to render:
-  <button disabled={false}>Buy now!</button>
+Error: Expected element to equal:
+   <button disabled={false}>Buy now!</button>
 ```
 
 > Negation: `.toNotHaveRendered()`

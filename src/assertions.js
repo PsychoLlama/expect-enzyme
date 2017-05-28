@@ -360,8 +360,6 @@ export const toHaveRendered = addEnzymeSupport(
   function (element) {
     const { actual } = this;
 
-    const type = actual.type();
-
     assert({
       ctx: this,
       statement: actual.equals(element),

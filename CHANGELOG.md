@@ -3,7 +3,7 @@
 
 ## v0.16.0
 ### Changed
-- `react`, `react-dom` and `enzyme` are peer dependencies now. This may break your tests if those dependencies aren't listed in your `package.json`.
+- `react`, `react-dom`, `expect` and `enzyme` are peer dependencies now. This may break your tests if those dependencies aren't listed in your `package.json`.
 
 ### Added
 - New `.toHaveRendered()` assertion.

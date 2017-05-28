@@ -2,6 +2,9 @@
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
 ## v0.16.0
+### Changed
+- `react`, `react-dom`, `expect` and `enzyme` are peer dependencies now. This may break your tests if those dependencies aren't listed in your `package.json`.
+
 ### Added
 - New `.toHaveRendered()` assertion.
 - New `.toNotHaveRendered()` assertion.

@@ -55,10 +55,17 @@ You get the idea.
 
 ```sh
 # npm
-npm install expect-enzyme --save-dev
+npm install expect expect-enzyme --save-dev
 
 # yarn
-yarn add expect-enzyme --dev
+yarn add expect expect-enzyme --dev
+```
+
+If node starts yelling about missing packages, you might wanna install this stuff too... ([more details](http://airbnb.io/enzyme/docs/installation/index.html))
+
+```sh
+# Setup is weird. This should help.
+yarn add enzyme react react-dom react-test-renderer --dev
 ```
 
 ### Extending

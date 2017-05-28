@@ -295,7 +295,7 @@ describe('expect-enzyme', () => {
     it('throws if the output is different', () => {
       const assertion = () => expect(element).toHaveRendered(<div />);
 
-      expect(assertion).toThrow(/footer/i);
+      expect(assertion).toThrow(/div/i);
     });
 
     it('does not throw if props are equal', () => {
@@ -321,7 +321,7 @@ describe('expect-enzyme', () => {
     it('does not attempt to stringify non-elements', () => {
       const assertion = () => expect(element).toHaveRendered(null);
 
-      expect(assertion).toThrow(/render/).toThrow(/null/);
+      expect(assertion).toThrow(/element/).toThrow(/null/);
     });
 
     it('does not throw if both outputs are null', () => {
@@ -365,12 +365,6 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow(/:/);
     });
-
-    it('things', () => {
-      const element = shallow(<button disabled>No</button>);
-
-      expect(element).toHaveRendered(<button disabled={false}>Buy now!</button>)
-    });
   });
 
   describe('toNotHaveRendered()', () => {
@@ -381,7 +375,7 @@ describe('expect-enzyme', () => {
       const element = shallow(<Element />);
       const assertion = () => expect(element).toNotHaveRendered(null);
 
-      expect(assertion).toThrow(/render/);
+      expect(assertion).toThrow(/element/);
     });
 
     it('does not throw if the value is different', () => {

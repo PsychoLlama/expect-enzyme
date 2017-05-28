@@ -361,7 +361,6 @@ export const toHaveRendered = addEnzymeSupport(
     const { actual } = this;
 
     const type = actual.type();
-    const name = typeof type === 'function' ? getDisplayName(type) : type;
 
     assert({
       ctx: this,
@@ -379,7 +378,7 @@ export const toHaveRendered = addEnzymeSupport(
         const indent = hasProps ? '\n\t' : '';
         const colon = indent ? ':' : ' ';
 
-        return `Expected ${name} ${not}to render` +
+        return `Expected element to ${not}equal` +
           `${colon}${indent}${expectedString}`;
       },
     });

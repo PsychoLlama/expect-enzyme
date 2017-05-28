@@ -4,10 +4,9 @@ import { shallow, mount } from 'enzyme';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import enzymify from './index';
 
-import assertions from './index';
-
-expect.extend(assertions);
+expect.extend(enzymify());
 
 
 describe('expect-enzyme', () => {

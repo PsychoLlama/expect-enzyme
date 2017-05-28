@@ -1,3 +1,2 @@
 --require babel-register
 --require ./src/test-setup.js
---reporter dot

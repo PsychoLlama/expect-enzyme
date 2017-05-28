@@ -3,7 +3,7 @@ import expect from 'expect';
 import createAssertions from './assertions';
 
 // eslint-disable-next-line
-export default function enzymify () {
+module.exports = function enzymify () {
   const asserted = expect();
 
   return createAssertions({
@@ -34,4 +34,4 @@ export default function enzymify () {
     toBeAn: asserted.toBeAn,
     toBeA: asserted.toBeA,
   });
-}
+};

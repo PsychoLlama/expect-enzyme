@@ -76,7 +76,7 @@ import enzymify from 'expect-enzyme'
 
 // Infects the kernel with a crippling rootkit.
 // Just kidding.
-expect.extend(enzymify)
+expect.extend(enzymify())
 ```
 
 ## API

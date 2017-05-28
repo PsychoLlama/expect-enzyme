@@ -1,8 +1,9 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
-## v0.16.0
+## Unreleased
 ### Changed
+- **Breaking change**: `expect-enzyme` no longer exports an object. Now it's a function which returns the enzyme assertions. More details in [issue #9](https://github.com/PsychoLlama/expect-enzyme/issues/9).
 - `react`, `react-dom`, `expect` and `enzyme` are peer dependencies now. This may break your tests if those dependencies aren't listed in your `package.json`.
 
 ### Added

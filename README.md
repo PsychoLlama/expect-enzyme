@@ -284,11 +284,13 @@ Asserts the component rendered the given value.
 
 ```js
 // The first event looks exactly like this.
-expect(calendar.find('Event').first())
-  .toHaveRendered(<Event invites={invites} />)
+expect(calendar.find('Event').first()).toHaveRendered(<Event invites={invites} />)
 
 // This list should be empty.
 expect(listOfRegrets).toHaveRendered(null)
+
+// I don't trust this button.
+expect(stockAdvice).toHaveRendered(<button disabled={false}>Buy now!</button>)
 ```
 
 ##### Error
@@ -298,6 +300,9 @@ Error: Expected div to render:
   <Event invites={Array[22]} />
 
 Error: Expected ul to render "null"
+
+Error: Expected button to render:
+  <button disabled={false}>Buy now!</button>
 ```
 
 > Negation: `.toNotHaveRendered()`

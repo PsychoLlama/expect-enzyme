@@ -365,6 +365,12 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow(/:/);
     });
+
+    it('things', () => {
+      const element = shallow(<button disabled>No</button>);
+
+      expect(element).toHaveRendered(<button disabled={false}>Buy now!</button>)
+    });
   });
 
   describe('toNotHaveRendered()', () => {

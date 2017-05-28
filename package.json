@@ -42,8 +42,8 @@
     "mocha": "^3.4.2",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
-    "react-addons-test-utils": "^15.5.1",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-test-renderer": "^15.5.4"
   },
   "peerDependencies": {
     "enzyme": "2.x.x",

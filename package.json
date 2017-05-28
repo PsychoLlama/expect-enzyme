@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha --opts ./mocha.opts 'src/**/*test.js'",
+    "test:watch": "npm run test -- --reporter min --watch",
     "lint": "eslint src/",
     "build": "babel src/ -d dist/",
     "prepublish": "npm run build"

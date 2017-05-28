@@ -1,8 +1,10 @@
+import {ShallowWrapper, ReactWrapper} from 'enzyme';
+import elementToString from './element-to-string';
 import getDisplayName from 'react-display-name';
 import stringifyObject from 'stringify-object';
-import {ShallowWrapper, ReactWrapper} from 'enzyme';
 import deepEqual from 'deep-eql';
 import expect from 'expect';
+import React from 'react';
 
 // Used to detect if an assertion is negated.
 const NEGATION_FLAG = 'enzyme-assertion-is-negated';
@@ -121,6 +123,8 @@ const original = {
 
   // Custom.
   toNotHaveContext: asserted.toNotHaveContext,
+  toNotHaveRendered: asserted.toHaveRendered,
+  toHaveRendered: asserted.toHaveRendered,
   toNotHaveStyle: asserted.toNotHaveStyle,
   toNotHaveClass: asserted.toNotHaveClass,
   toNotHaveProps: asserted.toNotHaveProps,
@@ -343,6 +347,50 @@ export const toHaveState = addEnzymeSupport(
 export const toNotHaveState = addEnzymeSupport(
   original.toNotHaveState,
   negate('toHaveState')
+);
+
+/**
+ * Asserts a component matches the given element output.
+ * @param  {Any} element - A valid react element.
+ * @return {this} - The expectation context.
+ */
+export const toHaveRendered = addEnzymeSupport(
+  original.toHaveRendered,
+
+  function (element) {
+    const { actual } = this;
+
+    assert({
+      ctx: this,
+      statement: actual.equals(element),
+      msg: (not) => {
+
+        const isValidElement = React.isValidElement(element);
+        const hasProps = isValidElement && Object.keys(element.props).length;
+
+        // Show abbreviated element on one line.
+        const expectedString = isValidElement
+          ? elementToString(element)
+          : `"${element}"`;
+
+        const indent = hasProps ? '\n\t' : '';
+        const colon = indent ? ':' : ' ';
+
+        return `Expected element to ${not}equal` +
+          `${colon}${indent}${expectedString}`;
+      },
+    });
+  }
+);
+
+/**
+ * Asserts the given output doesn't match what your component rendered.
+ * @param  {Any} element - A react element (or null) you expect to not match.
+ * @return {this} - The expectation context.
+ */
+export const toNotHaveRendered = addEnzymeSupport(
+  original.toNotHaveRendered,
+  negate('toHaveRendered')
 );
 
 /**

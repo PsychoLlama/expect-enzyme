@@ -975,6 +975,17 @@ describe('expect-enzyme', () => {
       expect(() => expect(component).toNotBeA(Component)).toThrow();
       expect(() => expect(element).toNotBeA(Component)).toNotThrow();
     });
+
+    it('shows a diff', () => {
+      try {
+        expect(element).toNotBeA('header');
+        throw new Error('Should have thrown.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toBe('header');
+        expect(error.expected).toBe('header');
+      }
+    });
   });
 
   describe('toNotBeAn()', () => {

@@ -137,6 +137,17 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toThrow(/enzyme wrapper/i);
     });
+
+    it('shows a diff', () => {
+      try {
+        expect(element).toHaveProp('attr', true);
+        throw new Error('Made it past');
+      } catch (error) {
+        expect(error.message).toNotMatch(/past/);
+        expect(error.expected).toEqual({ attr: true });
+        expect(error.actual).toEqual({ attr: element.prop('attr') });
+      }
+    });
   });
 
   describe('toNotHaveProp()', () => {
@@ -164,6 +175,17 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element).toNotHaveProp('value', 'offline');
 
       expect(assertion).toThrow(/value/);
+    });
+
+    it('shows a diff if the value is unspecified', () => {
+      try {
+        expect(element).toNotHaveProp('value');
+        throw new Error('Made it past');
+      } catch (error) {
+        expect(error.message).toNotMatch(/past/);
+        expect(error.actual).toEqual({ value: 'offline' });
+        expect(error.expected).toEqual({ value: undefined });
+      }
     });
   });
 

@@ -170,10 +170,14 @@ export default (original) => ({
 
       const actual = this.actual.props();
       const displayName = this.actual.name();
+      const real = { [prop]: actual[prop] };
+      const expected = { [prop]: value };
 
       if (!isNegated(this) || value === undefined) {
         assert({
           ctx: this,
+          expected,
+          actual: real,
           statement: actual.hasOwnProperty(prop),
           msg: (not) => `Expected ${displayName} to ${not}have prop "${prop}"`,
         });
@@ -183,6 +187,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: actual[prop] === value,
+          expected,
+          actual: real,
           msg: (not) => (
             `Expected ${displayName} property "${prop}" to ${not}be "${value}"`
           ),

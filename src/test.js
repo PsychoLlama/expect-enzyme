@@ -770,6 +770,16 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
+
+    it('throws a diff', () => {
+      try {
+        expect(element).toBeA('section');
+        throw new Error('Should have thrown an error');
+      } catch (error) {
+        expect(error.expected).toBe('section');
+        expect(error.actual).toBe('div');
+      }
+    });
   });
 
   describe('toBeAn()', () => {

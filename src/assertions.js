@@ -27,6 +27,8 @@ const isNegated = (ctx) => Boolean(ctx[NEGATION_FLAG]);
 const assert = ({
   statement,
   ctx = {},
+  expected,
+  actual,
   msg,
 }) => {
 
@@ -46,7 +48,12 @@ const assert = ({
   const details = msg instanceof Function ? msg(not) : msg;
 
   // Nope, it failed.
-  throw new Error(details);
+  const error = new Error(details);
+
+  error.expected = expected;
+  error.actual = actual;
+
+  throw error;
 };
 
 /**
@@ -492,11 +499,14 @@ export default (original) => ({
       const displayName = getDisplayName(type);
       const element = this.actual;
       const { article = 'a' } = this;
+      const name = element.name();
 
       // Check the type.
       assert({
         ctx: this,
         statement: element.is(type),
+        expected: displayName,
+        actual: name,
         msg: (not) => (
           `Expected ${element.name()} to ${not}be ${article} ${displayName}`
         ),

@@ -216,6 +216,20 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+
+    it('shows the diff', () => {
+      try {
+        expect(element).toHaveClass('some-class');
+        throw new Error('Should have thrown');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toEqual(element.prop('className').split(' '));
+        expect(error.expected).toEqual([
+          'some-class',
+          ...element.prop('className').split(' '),
+        ]);
+      }
+    });
   });
 
   describe('toNotHaveClass()', () => {
@@ -231,6 +245,18 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element).toNotHaveClass('elvis');
 
       expect(assertion).toNotThrow();
+    });
+
+    it('shows the diff', () => {
+      const element = shallow(<div className="profile potato" />);
+      try {
+        expect(element).toNotHaveClass('potato');
+        throw new Error('Should have thrown.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toEqual(['profile', 'potato']);
+        expect(error.expected).toEqual(['profile']);
+      }
     });
   });
 

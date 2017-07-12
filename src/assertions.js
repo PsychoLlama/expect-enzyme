@@ -265,10 +265,22 @@ export default (original) => ({
 
       // Only works for enzyme elements.
       assertIsEnzymeWrapper(element);
+      const actual = element.prop('className').split(' ');
+      let expected = String(className).split(' ');
+
+      if (isNegated(this)) {
+
+        // Reimagine `actual` without the classname.
+        expected = actual.filter((value) => value !== className);
+      } else {
+        expected.push(...actual);
+      }
 
       assert({
         ctx: this,
         statement: element.hasClass(className),
+        expected,
+        actual,
         msg: (not) => (
           `Expected ${element.name()} to ${not}have class "${className}"`
         ),

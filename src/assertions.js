@@ -316,6 +316,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: deepEqual(actual, expected),
+          expected,
+          actual,
           msg: (not) => `Expected state "${key}" to ${not}equal ${expected}`,
         });
       });

@@ -299,6 +299,20 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+
+    it('shows the diff', () => {
+      const expected = { clicks: 10 };
+      element.setState({ clicks: 48 });
+
+      try {
+        expect(element).toHaveState(expected);
+        throw new Error('Should not throw');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toEqual(element.state('clicks'));
+        expect(error.expected).toBe(expected.clicks);
+      }
+    });
   });
 
   describe('toHaveRendered()', () => {
@@ -448,6 +462,20 @@ describe('expect-enzyme', () => {
       });
 
       expect(assertion).toThrow(/state/);
+    });
+
+    it('shows a diff', () => {
+      const expected = { clicks: 48 };
+      element.setState(expected);
+
+      try {
+        expect(element).toNotHaveState(expected);
+        throw new Error('Should not survive');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toEqual(element.state('clicks'));
+        expect(error.expected).toBe(expected.clicks);
+      }
     });
   });
 

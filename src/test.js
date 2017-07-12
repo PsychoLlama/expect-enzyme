@@ -676,6 +676,19 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
     });
+
+    it('shows a diff', () => {
+      const expected = { data: 'different' };
+
+      try {
+        expect(element).toHaveContext(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.context('data'));
+        expect(error.expected).toBe(expected.data);
+      }
+    });
   });
 
   describe('toNotHaveContext()', () => {
@@ -709,6 +722,19 @@ describe('expect-enzyme', () => {
       });
 
       expect(assertion).toThrow(/context/);
+    });
+
+    it('shows the diff', () => {
+      const expected = { string: element.context('string') };
+
+      try {
+        expect(element).toNotHaveContext(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.context('string'));
+        expect(error.expected).toBe(expected.string);
+      }
     });
   });
 

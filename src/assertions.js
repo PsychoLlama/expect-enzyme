@@ -474,6 +474,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: deepEqual(actual[property], expected),
+          actual: actual[property],
+          expected,
           msg: (not) => (
             'Expected context property' +
             ` "${property}" to ${not}equal ${expectedString}`

@@ -27,6 +27,8 @@ const isNegated = (ctx) => Boolean(ctx[NEGATION_FLAG]);
 const assert = ({
   statement,
   ctx = {},
+  expected,
+  actual,
   msg,
 }) => {
 
@@ -46,7 +48,12 @@ const assert = ({
   const details = msg instanceof Function ? msg(not) : msg;
 
   // Nope, it failed.
-  throw new Error(details);
+  const error = new Error(details);
+
+  error.expected = expected;
+  error.actual = actual;
+
+  throw error;
 };
 
 /**
@@ -163,10 +170,14 @@ export default (original) => ({
 
       const actual = this.actual.props();
       const displayName = this.actual.name();
+      const real = { [prop]: actual[prop] };
+      const expected = { [prop]: value };
 
       if (!isNegated(this) || value === undefined) {
         assert({
           ctx: this,
+          expected,
+          actual: real,
           statement: actual.hasOwnProperty(prop),
           msg: (not) => `Expected ${displayName} to ${not}have prop "${prop}"`,
         });
@@ -176,6 +187,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: actual[prop] === value,
+          expected,
+          actual: real,
           msg: (not) => (
             `Expected ${displayName} property "${prop}" to ${not}be "${value}"`
           ),
@@ -252,10 +265,22 @@ export default (original) => ({
 
       // Only works for enzyme elements.
       assertIsEnzymeWrapper(element);
+      const actual = element.prop('className').split(' ');
+      let expected = String(className).split(' ');
+
+      if (isNegated(this)) {
+
+        // Reimagine `actual` without the classname.
+        expected = actual.filter((value) => value !== className);
+      } else {
+        expected.push(...actual);
+      }
 
       assert({
         ctx: this,
         statement: element.hasClass(className),
+        expected,
+        actual,
         msg: (not) => (
           `Expected ${element.name()} to ${not}have class "${className}"`
         ),
@@ -303,6 +328,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: deepEqual(actual, expected),
+          expected,
+          actual,
           msg: (not) => `Expected state "${key}" to ${not}equal ${expected}`,
         });
       });
@@ -411,6 +438,8 @@ export default (original) => ({
           assert({
             ctx: this,
             statement: style[property] === value,
+            expected: styles,
+            actual: style,
             msg: (not) => (
               `Expected ${displayName} to ${not}have css ${styleString}`
             ),
@@ -457,6 +486,8 @@ export default (original) => ({
         assert({
           ctx: this,
           statement: deepEqual(actual[property], expected),
+          actual: actual[property],
+          expected,
           msg: (not) => (
             'Expected context property' +
             ` "${property}" to ${not}equal ${expectedString}`
@@ -492,11 +523,14 @@ export default (original) => ({
       const displayName = getDisplayName(type);
       const element = this.actual;
       const { article = 'a' } = this;
+      const name = element.name();
 
       // Check the type.
       assert({
         ctx: this,
         statement: element.is(type),
+        expected: displayName,
+        actual: name,
         msg: (not) => (
           `Expected ${element.name()} to ${not}be ${article} ${displayName}`
         ),

@@ -137,6 +137,17 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toThrow(/enzyme wrapper/i);
     });
+
+    it('shows a diff', () => {
+      try {
+        expect(element).toHaveProp('attr', true);
+        throw new Error('Made it past');
+      } catch (error) {
+        expect(error.message).toNotMatch(/past/);
+        expect(error.expected).toEqual({ attr: true });
+        expect(error.actual).toEqual({ attr: element.prop('attr') });
+      }
+    });
   });
 
   describe('toNotHaveProp()', () => {
@@ -164,6 +175,17 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element).toNotHaveProp('value', 'offline');
 
       expect(assertion).toThrow(/value/);
+    });
+
+    it('shows a diff if the value is unspecified', () => {
+      try {
+        expect(element).toNotHaveProp('value');
+        throw new Error('Made it past');
+      } catch (error) {
+        expect(error.message).toNotMatch(/past/);
+        expect(error.actual).toEqual({ value: 'offline' });
+        expect(error.expected).toEqual({ value: undefined });
+      }
     });
   });
 
@@ -194,6 +216,20 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+
+    it('shows the diff', () => {
+      try {
+        expect(element).toHaveClass('some-class');
+        throw new Error('Should have thrown');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toEqual(element.prop('className').split(' '));
+        expect(error.expected).toEqual([
+          'some-class',
+          ...element.prop('className').split(' '),
+        ]);
+      }
+    });
   });
 
   describe('toNotHaveClass()', () => {
@@ -209,6 +245,18 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element).toNotHaveClass('elvis');
 
       expect(assertion).toNotThrow();
+    });
+
+    it('shows the diff', () => {
+      const element = shallow(<div className="profile potato" />);
+      try {
+        expect(element).toNotHaveClass('potato');
+        throw new Error('Should have thrown.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toEqual(['profile', 'potato']);
+        expect(error.expected).toEqual(['profile']);
+      }
     });
   });
 
@@ -276,6 +324,20 @@ describe('expect-enzyme', () => {
       const result = expectation.toHaveState({});
 
       expect(result).toBe(expectation);
+    });
+
+    it('shows the diff', () => {
+      const expected = { clicks: 10 };
+      element.setState({ clicks: 48 });
+
+      try {
+        expect(element).toHaveState(expected);
+        throw new Error('Should not throw');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toEqual(element.state('clicks'));
+        expect(error.expected).toBe(expected.clicks);
+      }
     });
   });
 
@@ -427,6 +489,20 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toThrow(/state/);
     });
+
+    it('shows a diff', () => {
+      const expected = { clicks: 48 };
+      element.setState(expected);
+
+      try {
+        expect(element).toNotHaveState(expected);
+        throw new Error('Should not survive');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toEqual(element.state('clicks'));
+        expect(error.expected).toBe(expected.clicks);
+      }
+    });
   });
 
   describe('toHaveStyle()', () => {
@@ -495,6 +571,18 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+
+    it('shows the diff', () => {
+      const expected = { color: 'potato' };
+      try {
+        expect(element).toHaveStyle(expected);
+        throw new Error('Should not throw');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toBe(element.prop('style'));
+        expect(error.expected).toBe(expected);
+      }
+    });
   });
 
   describe('toNotHaveStyle()', () => {
@@ -546,6 +634,19 @@ describe('expect-enzyme', () => {
       });
 
       expect(assertion).toThrow(/color/);
+    });
+
+    it('shows a diff', () => {
+      const expected = { color: 'orange' };
+
+      try {
+        expect(element).toNotHaveStyle(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.prop('style'));
+        expect(error.expected).toBe(expected);
+      }
     });
   });
 
@@ -601,6 +702,19 @@ describe('expect-enzyme', () => {
       expect(assertion).toNotThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
     });
+
+    it('shows a diff', () => {
+      const expected = { data: 'different' };
+
+      try {
+        expect(element).toHaveContext(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.context('data'));
+        expect(error.expected).toBe(expected.data);
+      }
+    });
   });
 
   describe('toNotHaveContext()', () => {
@@ -634,6 +748,19 @@ describe('expect-enzyme', () => {
       });
 
       expect(assertion).toThrow(/context/);
+    });
+
+    it('shows the diff', () => {
+      const expected = { string: element.context('string') };
+
+      try {
+        expect(element).toNotHaveContext(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.context('string'));
+        expect(error.expected).toBe(expected.string);
+      }
     });
   });
 
@@ -770,6 +897,16 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
+
+    it('throws a diff', () => {
+      try {
+        expect(element).toBeA('section');
+        throw new Error('Should have thrown an error');
+      } catch (error) {
+        expect(error.expected).toBe('section');
+        expect(error.actual).toBe('div');
+      }
+    });
   });
 
   describe('toBeAn()', () => {
@@ -837,6 +974,17 @@ describe('expect-enzyme', () => {
 
       expect(() => expect(component).toNotBeA(Component)).toThrow();
       expect(() => expect(element).toNotBeA(Component)).toNotThrow();
+    });
+
+    it('shows a diff', () => {
+      try {
+        expect(element).toNotBeA('header');
+        throw new Error('Should have thrown.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/thrown/);
+        expect(error.actual).toBe('header');
+        expect(error.expected).toBe('header');
+      }
     });
   });
 

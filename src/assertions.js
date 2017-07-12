@@ -418,6 +418,8 @@ export default (original) => ({
           assert({
             ctx: this,
             statement: style[property] === value,
+            expected: styles,
+            actual: style,
             msg: (not) => (
               `Expected ${displayName} to ${not}have css ${styleString}`
             ),

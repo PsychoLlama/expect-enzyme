@@ -495,6 +495,18 @@ describe('expect-enzyme', () => {
 
       expect(result).toBe(expectation);
     });
+
+    it('shows the diff', () => {
+      const expected = { color: 'potato' };
+      try {
+        expect(element).toHaveStyle(expected);
+        throw new Error('Should not throw');
+      } catch (error) {
+        expect(error.message).toNotMatch(/should/);
+        expect(error.actual).toBe(element.prop('style'));
+        expect(error.expected).toBe(expected);
+      }
+    });
   });
 
   describe('toNotHaveStyle()', () => {
@@ -546,6 +558,19 @@ describe('expect-enzyme', () => {
       });
 
       expect(assertion).toThrow(/color/);
+    });
+
+    it('shows a diff', () => {
+      const expected = { color: 'orange' };
+
+      try {
+        expect(element).toNotHaveStyle(expected);
+        throw new Error('Inadvertantly passed.');
+      } catch (error) {
+        expect(error.message).toNotMatch(/passed/);
+        expect(error.actual).toBe(element.prop('style'));
+        expect(error.expected).toBe(expected);
+      }
     });
   });
 

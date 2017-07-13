@@ -230,6 +230,19 @@ describe('expect-enzyme', () => {
         ]);
       }
     });
+
+    it('shows a diff when the className is undefined', () => {
+      const element = shallow(<div />);
+
+      try {
+        expect(element).toHaveClass('non-existent-class');
+        throw new Error('Should have thrown');
+      } catch (error) {
+        expect(error.message).toNotMatch(/(thrown|split)/);
+        expect(error.actual).toEqual([]);
+        expect(error.expected).toEqual(['non-existent-class']);
+      }
+    });
   });
 
   describe('toNotHaveClass()', () => {

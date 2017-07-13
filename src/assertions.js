@@ -265,7 +265,10 @@ export default (original) => ({
 
       // Only works for enzyme elements.
       assertIsEnzymeWrapper(element);
-      const actual = element.prop('className').split(' ');
+      const actual = element.prop('className')
+        ? element.prop('className').split(' ')
+        : [];
+
       let expected = String(className).split(' ');
 
       if (isNegated(this)) {

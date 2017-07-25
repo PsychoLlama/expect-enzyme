@@ -1,0 +1,20 @@
+extends:
+  - plugin:react/recommended
+  - eslint:recommended
+  - llama
+  - prettier
+
+plugins:
+  - react
+
+env:
+  mocha: true
+  node: true
+  es6: true
+
+parser: babel-eslint
+parserOptions:
+  sourceType: module
+
+rules:
+  lines-around-comment: off

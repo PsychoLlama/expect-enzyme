@@ -1,4 +1,4 @@
-import {ShallowWrapper, ReactWrapper} from 'enzyme';
+import { ShallowWrapper, ReactWrapper } from 'enzyme';
 import elementToString from './element-to-string';
 import getDisplayName from 'react-display-name';
 import stringifyObject from 'stringify-object';
@@ -13,7 +13,7 @@ const NEGATION_FLAG = 'enzyme-assertion-is-negated';
  * @param  {Expectation} ctx - The assertion context.
  * @return {Boolean} - Whether the assertion is negated.
  */
-const isNegated = (ctx) => Boolean(ctx[NEGATION_FLAG]);
+const isNegated = ctx => Boolean(ctx[NEGATION_FLAG]);
 
 /**
  * Utility for asserting a statement is true.
@@ -24,14 +24,7 @@ const isNegated = (ctx) => Boolean(ctx[NEGATION_FLAG]);
  * @param  {Expectation} [ctx] - The current `this` value.
  * @return {undefined}
  */
-const assert = ({
-  statement,
-  ctx = {},
-  expected,
-  actual,
-  msg,
-}) => {
-
+const assert = ({ statement, ctx = {}, expected, actual, msg }) => {
   // Detect negated assertions.
   const negated = isNegated(ctx);
   const correct = Boolean(negated ? !statement : statement);
@@ -61,30 +54,28 @@ const assert = ({
  * @param  {String} methodName - The name of the assertion to invert.
  * @return {Function} - To be used as the assertion.
  */
-const negate = (methodName) => function () {
-  this[NEGATION_FLAG] = true;
-  const assertion = this[methodName];
+const negate = methodName =>
+  function() {
+    this[NEGATION_FLAG] = true;
+    const assertion = this[methodName];
 
-  try {
-    assertion.apply(this, arguments);
-  } catch (error) {
-    throw error;
-  } finally {
-
-    // Removes the flag, regardless of outcome.
-    delete this[NEGATION_FLAG];
-  }
-};
+    try {
+      assertion.apply(this, arguments);
+    } catch (error) {
+      throw error;
+    } finally {
+      // Removes the flag, regardless of outcome.
+      delete this[NEGATION_FLAG];
+    }
+  };
 
 /**
  * Checks if the given value is an enzyme wrapper.
  * @param  {Any} actual - The value to check.
  * @return {Boolean} - Whether it's enzyme.
  */
-const isEnzymeWrapper = (actual) => (
-  actual instanceof ShallowWrapper ||
-  actual instanceof ReactWrapper
-);
+const isEnzymeWrapper = actual =>
+  actual instanceof ShallowWrapper || actual instanceof ReactWrapper;
 
 /**
  * Throws an error if the given argument isn't an enzyme wrapper.
@@ -92,17 +83,18 @@ const isEnzymeWrapper = (actual) => (
  * @return {undefined}
  * @throws {Error} - If the type isn't enzyme.
  */
-const assertIsEnzymeWrapper = (actual) => assert({
-  statement: isEnzymeWrapper(actual),
-  msg: `${actual} is not an enzyme wrapper`,
-});
+const assertIsEnzymeWrapper = actual =>
+  assert({
+    statement: isEnzymeWrapper(actual),
+    msg: `${actual} is not an enzyme wrapper`,
+  });
 
 /**
  * Turns an enzyme selector into a printable string.
  * @param  {Function|String|Object} selector - An enzyme selector.
  * @return {String} - A loggable description of the selector.
  */
-const stringifySelector = (selector) => {
+const stringifySelector = selector => {
   const type = typeof selector;
 
   // CSS selector?
@@ -117,7 +109,6 @@ const stringifySelector = (selector) => {
 
   // Nope, enzyme attribute selector.
   return stringifyObject(selector, {
-
     // Prevents newlines.
     inlineCharacterLimit: Infinity,
   });
@@ -129,12 +120,10 @@ const stringifySelector = (selector) => {
  * @param  {Function} enzymeAssertion - An assertion handler for enzyme types.
  * @return {Function} - An assertion method.
  */
-const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
-  function assertion () {
-
+const addEnzymeSupport = (defaultAssertion, enzymeAssertion) =>
+  function assertion() {
     // Is the value an enzyme wrapper?
     if (isEnzymeWrapper(this.actual)) {
-
       // Use the enzyme assertion.
       enzymeAssertion.apply(this, arguments);
     } else if (defaultAssertion) {
@@ -146,58 +135,51 @@ const addEnzymeSupport = (defaultAssertion, enzymeAssertion) => (
 
     // Chain 'em assertions.
     return this;
-  }
-);
+  };
 
 /**
  * Creates a new set of enzyme assertions overloading those provided.
  * @param  {Object} original - A collection of assertions to overload.
  * @return {Object} - The new assertions.
  */
-export default (original) => ({
-
+export default original => ({
   /**
    * Assert a component has a property.
    * @param  {String} prop - An expected property.
    * @param  {Any} [value=true] - An expected value.
    * @return {this} - The current expect assertion.
    */
-  toHaveProp: addEnzymeSupport(
-    original.toHaveProp,
+  toHaveProp: addEnzymeSupport(original.toHaveProp, function(prop, value) {
+    assertIsEnzymeWrapper(this.actual);
 
-    function (prop, value) {
-      assertIsEnzymeWrapper(this.actual);
+    const actual = this.actual.props();
+    const displayName = this.actual.name();
+    const real = { [prop]: actual[prop] };
+    const expected = { [prop]: value };
 
-      const actual = this.actual.props();
-      const displayName = this.actual.name();
-      const real = { [prop]: actual[prop] };
-      const expected = { [prop]: value };
-
-      if (!isNegated(this) || value === undefined) {
-        assert({
-          ctx: this,
-          expected,
-          actual: real,
-          statement: actual.hasOwnProperty(prop),
-          msg: (not) => `Expected ${displayName} to ${not}have prop "${prop}"`,
-        });
-      }
-
-      if (value !== undefined) {
-        assert({
-          ctx: this,
-          statement: actual[prop] === value,
-          expected,
-          actual: real,
-          msg: (not) => (
-            `Expected ${displayName} property "${prop}" to ${not}be "${value}"`
-          ),
-        });
-      }
-
-      return this;
+    if (!isNegated(this) || value === undefined) {
+      assert({
+        ctx: this,
+        expected,
+        actual: real,
+        statement: actual.hasOwnProperty(prop),
+        msg: not => `Expected ${displayName} to ${not}have prop "${prop}"`,
+      });
     }
-  ),
+
+    if (value !== undefined) {
+      assert({
+        ctx: this,
+        statement: actual[prop] === value,
+        expected,
+        actual: real,
+        msg: not =>
+          `Expected ${displayName} property "${prop}" to ${not}be "${value}"`,
+      });
+    }
+
+    return this;
+  }),
 
   /**
    * Asserts an element doesn't match the given prop. If no
@@ -206,41 +188,31 @@ export default (original) => ({
    * @param  {Any} [value] - The value it shouldn't be.
    * @return {this} - The expectation context.
    */
-  toNotHaveProp: addEnzymeSupport(
-    original.toNotHaveProp,
-    negate('toHaveProp')
-  ),
+  toNotHaveProp: addEnzymeSupport(original.toNotHaveProp, negate('toHaveProp')),
 
   /**
    * Verifies a component was given certain props.
    * @param  {Object} props - Expected props.
    * @return {this} - The current assertion.
    */
-  toHaveProps: addEnzymeSupport(
-    original.toHaveProps,
+  toHaveProps: addEnzymeSupport(original.toHaveProps, function(props) {
+    // Props should be an object.
+    assert({
+      statement: props instanceof Object,
+      msg: `Method "toHaveProps()" expected a props object, was given "${props}"`,
+    });
 
-    function (props) {
+    // Make sure we're dealing with an enzyme wrapper.
+    assertIsEnzymeWrapper(this.actual);
 
-      // Props should be an object.
-      assert({
-        statement: props instanceof Object,
-        msg: (
-          `Method "toHaveProps()" expected a props object, was given "${props}"`
-        ),
-      });
+    // Check each expected prop.
+    Object.keys(props).forEach(key => {
+      const value = props[key];
 
-      // Make sure we're dealing with an enzyme wrapper.
-      assertIsEnzymeWrapper(this.actual);
-
-      // Check each expected prop.
-      Object.keys(props).forEach((key) => {
-        const value = props[key];
-
-        // Assert!
-        this.toHaveProp(key, value);
-      });
-    }
-  ),
+      // Assert!
+      this.toHaveProp(key, value);
+    });
+  }),
 
   /**
    * Assert an element does not contain a set of props.
@@ -249,7 +221,7 @@ export default (original) => ({
    */
   toNotHaveProps: addEnzymeSupport(
     original.toNotHaveProps,
-    negate('toHaveProps')
+    negate('toHaveProps'),
   ),
 
   /**
@@ -257,41 +229,35 @@ export default (original) => ({
    * @param  {String} className - The class the component should have.
    * @return {this} - The expectation context.
    */
-  toHaveClass: addEnzymeSupport(
-    original.toHaveClass,
+  toHaveClass: addEnzymeSupport(original.toHaveClass, function(className) {
+    const element = this.actual;
 
-    function (className) {
-      const element = this.actual;
+    // Only works for enzyme elements.
+    assertIsEnzymeWrapper(element);
+    const actual = element.prop('className')
+      ? element.prop('className').split(' ')
+      : [];
 
-      // Only works for enzyme elements.
-      assertIsEnzymeWrapper(element);
-      const actual = element.prop('className')
-        ? element.prop('className').split(' ')
-        : [];
+    let expected = String(className).split(' ');
 
-      let expected = String(className).split(' ');
-
-      if (isNegated(this)) {
-
-        // Reimagine `actual` without the classname.
-        expected = actual.filter((value) => value !== className);
-      } else {
-        expected.push(...actual);
-      }
-
-      assert({
-        ctx: this,
-        statement: element.hasClass(className),
-        expected,
-        actual,
-        msg: (not) => (
-          `Expected ${element.name()} to ${not}have class "${className}"`
-        ),
-      });
-
-      return this;
+    if (isNegated(this)) {
+      // Reimagine `actual` without the classname.
+      expected = actual.filter(value => value !== className);
+    } else {
+      expected.push(...actual);
     }
-  ),
+
+    assert({
+      ctx: this,
+      statement: element.hasClass(className),
+      expected,
+      actual,
+      msg: not =>
+        `Expected ${element.name()} to ${not}have class "${className}"`,
+    });
+
+    return this;
+  }),
 
   /**
    * Asserts a component does not have a class name.
@@ -300,7 +266,7 @@ export default (original) => ({
    */
   toNotHaveClass: addEnzymeSupport(
     original.toNotHaveClass,
-    negate('toHaveClass')
+    negate('toHaveClass'),
   ),
 
   /**
@@ -308,38 +274,35 @@ export default (original) => ({
    * @param  {Object} expectedState - State the component should contain.
    * @return {this} - The expectation context.
    */
-  toHaveState: addEnzymeSupport(
-    original.toHaveState,
+  toHaveState: addEnzymeSupport(original.toHaveState, function(expectedState) {
+    const element = this.actual;
+    assertIsEnzymeWrapper(element);
 
-    function (expectedState) {
-      const element = this.actual;
-      assertIsEnzymeWrapper(element);
+    // Make sure the expected state is valid.
+    assert({
+      statement: expectedState instanceof Object,
+      msg:
+        'expect(...).toHaveState expects an object,' +
+        ` was given "${expectedState}"`,
+    });
 
-      // Make sure the expected state is valid.
+    // Check every property in the expected state.
+    Object.keys(expectedState).forEach(key => {
+      const actual = element.state(key);
+      const expected = expectedState[key];
+
+      // Deeply check equivalence.
       assert({
-        statement: expectedState instanceof Object,
-        msg: 'expect(...).toHaveState expects an object,' +
-          ` was given "${expectedState}"`,
+        ctx: this,
+        statement: deepEqual(actual, expected),
+        expected,
+        actual,
+        msg: not => `Expected state "${key}" to ${not}equal ${expected}`,
       });
+    });
 
-      // Check every property in the expected state.
-      Object.keys(expectedState).forEach((key) => {
-        const actual = element.state(key);
-        const expected = expectedState[key];
-
-        // Deeply check equivalence.
-        assert({
-          ctx: this,
-          statement: deepEqual(actual, expected),
-          expected,
-          actual,
-          msg: (not) => `Expected state "${key}" to ${not}equal ${expected}`,
-        });
-      });
-
-      return this;
-    }
-  ),
+    return this;
+  }),
 
   /**
    * Asserts a component does not contain the given state.
@@ -348,7 +311,7 @@ export default (original) => ({
    */
   toNotHaveState: addEnzymeSupport(
     original.toNotHaveState,
-    negate('toHaveState')
+    negate('toHaveState'),
   ),
 
   /**
@@ -356,34 +319,31 @@ export default (original) => ({
    * @param  {Any} element - A valid react element.
    * @return {this} - The expectation context.
    */
-  toHaveRendered: addEnzymeSupport(
-    original.toHaveRendered,
+  toHaveRendered: addEnzymeSupport(original.toHaveRendered, function(element) {
+    const { actual } = this;
 
-    function (element) {
-      const { actual } = this;
+    assert({
+      ctx: this,
+      statement: actual.equals(element),
+      msg: not => {
+        const isValidElement = React.isValidElement(element);
+        const hasProps = isValidElement && Object.keys(element.props).length;
 
-      assert({
-        ctx: this,
-        statement: actual.equals(element),
-        msg: (not) => {
+        // Show abbreviated element on one line.
+        const expectedString = isValidElement
+          ? elementToString(element)
+          : `"${element}"`;
 
-          const isValidElement = React.isValidElement(element);
-          const hasProps = isValidElement && Object.keys(element.props).length;
+        const indent = hasProps ? '\n\t' : '';
+        const colon = indent ? ':' : ' ';
 
-          // Show abbreviated element on one line.
-          const expectedString = isValidElement
-            ? elementToString(element)
-            : `"${element}"`;
-
-          const indent = hasProps ? '\n\t' : '';
-          const colon = indent ? ':' : ' ';
-
-          return `Expected element to ${not}equal` +
-            `${colon}${indent}${expectedString}`;
-        },
-      });
-    }
-  ),
+        return (
+          `Expected element to ${not}equal` +
+          `${colon}${indent}${expectedString}`
+        );
+      },
+    });
+  }),
 
   /**
    * Asserts the given output doesn't match what your component rendered.
@@ -392,7 +352,7 @@ export default (original) => ({
    */
   toNotHaveRendered: addEnzymeSupport(
     original.toNotHaveRendered,
-    negate('toHaveRendered')
+    negate('toHaveRendered'),
   ),
 
   /**
@@ -401,58 +361,58 @@ export default (original) => ({
    * @param  {Any} [value] - The expected CSS value.
    * @return {this} - The expectation context.
    */
-  toHaveStyle: addEnzymeSupport(
-    original.toHaveStyle,
+  toHaveStyle: addEnzymeSupport(original.toHaveStyle, function(
+    property,
+    value,
+  ) {
+    const element = this.actual;
+    assertIsEnzymeWrapper(element);
 
-    function (property, value) {
-      const element = this.actual;
-      assertIsEnzymeWrapper(element);
+    const style = element.prop('style') || {};
+    const displayName = element.name();
 
-      const style = element.prop('style') || {};
-      const displayName = element.name();
+    const styles =
+      property instanceof Object
+        ? property
+        : {
+            [property]: value,
+          };
 
-      const styles = property instanceof Object ? property : {
-        [property]: value,
-      };
+    Object.keys(styles).forEach(property => {
+      const value = styles[property];
 
-      Object.keys(styles).forEach((property) => {
-        const value = styles[property];
-
-        // "value" parameter is optional.
-        if (value === undefined) {
-
-          // Make sure the property is specified.
-          assert({
-            ctx: this,
-            statement: style.hasOwnProperty(property),
-            msg: (not) => (
-              `Expected ${displayName} to ${not}have css property "${property}"`
-            ),
-          });
-
-        } else {
-
-          // Show what css is expected.
-          const styleString = stringifyObject({ [property]: value }, {
+      // "value" parameter is optional.
+      if (value === undefined) {
+        // Make sure the property is specified.
+        assert({
+          ctx: this,
+          statement: style.hasOwnProperty(property),
+          msg: not =>
+            `Expected ${displayName} to ${not}have css property "${property}"`,
+        });
+      } else {
+        // Show what css is expected.
+        const styleString = stringifyObject(
+          { [property]: value },
+          {
             inlineCharacterLimit: Infinity,
-          });
+          },
+        );
 
-          // Make sure the value matches.
-          assert({
-            ctx: this,
-            statement: style[property] === value,
-            expected: styles,
-            actual: style,
-            msg: (not) => (
-              `Expected ${displayName} to ${not}have css ${styleString}`
-            ),
-          });
-        }
-      });
+        // Make sure the value matches.
+        assert({
+          ctx: this,
+          statement: style[property] === value,
+          expected: styles,
+          actual: style,
+          msg: not =>
+            `Expected ${displayName} to ${not}have css ${styleString}`,
+        });
+      }
+    });
 
-      return this;
-    }
-  ),
+    return this;
+  }),
 
   /**
    * Asserts an element does not have a set of styles.
@@ -463,7 +423,7 @@ export default (original) => ({
    */
   toNotHaveStyle: addEnzymeSupport(
     original.toNotHaveStyle,
-    negate('toHaveStyle')
+    negate('toHaveStyle'),
   ),
 
   /**
@@ -473,14 +433,13 @@ export default (original) => ({
    */
   toHaveContext: addEnzymeSupport(
     original.toHaveContext,
-
-    function toHaveContext (context) {
+    function toHaveContext(context) {
       const element = this.actual;
       assertIsEnzymeWrapper(element);
 
       const actual = element.context();
 
-      Object.keys(context).forEach((property) => {
+      Object.keys(context).forEach(property => {
         const expected = context[property];
         const expectedString = stringifyObject(expected, {
           inlineCharacterLimit: Infinity,
@@ -491,15 +450,14 @@ export default (original) => ({
           statement: deepEqual(actual[property], expected),
           actual: actual[property],
           expected,
-          msg: (not) => (
+          msg: not =>
             'Expected context property' +
-            ` "${property}" to ${not}equal ${expectedString}`
-          ),
+            ` "${property}" to ${not}equal ${expectedString}`,
         });
       });
 
       return this;
-    }
+    },
   ),
 
   /**
@@ -509,7 +467,7 @@ export default (original) => ({
    */
   toNotHaveContext: addEnzymeSupport(
     original.toNotHaveContext,
-    negate('toHaveContext')
+    negate('toHaveContext'),
   ),
 
   /**
@@ -517,72 +475,54 @@ export default (original) => ({
    * @param  {String|Function} type - The type you expect your element to be.
    * @return {this} - The expectation.
    */
-  toBeA: addEnzymeSupport(
-    original.toBeA,
+  toBeA: addEnzymeSupport(original.toBeA, function(type) {
+    // User-friendly component description.
+    const displayName = getDisplayName(type);
+    const element = this.actual;
+    const { article = 'a' } = this;
+    const name = element.name();
 
-    function (type) {
-
-      // User-friendly component description.
-      const displayName = getDisplayName(type);
-      const element = this.actual;
-      const { article = 'a' } = this;
-      const name = element.name();
-
-      // Check the type.
-      assert({
-        ctx: this,
-        statement: element.is(type),
-        expected: displayName,
-        actual: name,
-        msg: (not) => (
-          `Expected ${element.name()} to ${not}be ${article} ${displayName}`
-        ),
-      });
-    }
-  ),
+    // Check the type.
+    assert({
+      ctx: this,
+      statement: element.is(type),
+      expected: displayName,
+      actual: name,
+      msg: not =>
+        `Expected ${element.name()} to ${not}be ${article} ${displayName}`,
+    });
+  }),
 
   /**
    * Same as `.toBeA(type)`, but with different wording.
    * @param  {String|Function} type - The type you expect your element to be.
    * @return {this} - The expectation context.
    */
-  toBeAn: addEnzymeSupport(
-    original.toBeAn,
+  toBeAn: addEnzymeSupport(original.toBeAn, function(type) {
+    // Set the correct article form.
+    this.article = 'an';
 
-    function (type) {
-
-      // Set the correct article form.
-      this.article = 'an';
-
-      // Assert!
-      this.toBeA(type);
-    }
-  ),
+    // Assert!
+    this.toBeA(type);
+  }),
 
   /**
    * Asserts the enzyme wrapper contains something.
    * @return {this} - The expectation context.
    */
-  toExist: addEnzymeSupport(
-    original.toExist,
-
-    function () {
-      assert({
-        ctx: this,
-        statement: this.actual.length > 0,
-        msg: (not) => `Expected element to ${not}exist`,
-      });
-    }
-  ),
+  toExist: addEnzymeSupport(original.toExist, function() {
+    assert({
+      ctx: this,
+      statement: this.actual.length > 0,
+      msg: not => `Expected element to ${not}exist`,
+    });
+  }),
 
   /**
    * Asserts an element does not exist.
    * @return {this} - The expectation context.
    */
-  toNotExist: addEnzymeSupport(
-    original.toNotExist,
-    negate('toExist')
-  ),
+  toNotExist: addEnzymeSupport(original.toNotExist, negate('toExist')),
 
   /**
    * Assert the component is not a type.
@@ -590,10 +530,7 @@ export default (original) => ({
    * The type you expect your element not to be.
    * @return {this} - The expectation context.
    */
-  toNotBeA: addEnzymeSupport(
-    original.toNotBeA,
-    negate('toBeA')
-  ),
+  toNotBeA: addEnzymeSupport(original.toNotBeA, negate('toBeA')),
 
   /**
    * Same as `.toNotBeA(type)`, but with different wording.
@@ -601,17 +538,13 @@ export default (original) => ({
    * The type you expect your element not to be.
    * @return {this} - The expectation context.
    */
-  toNotBeAn: addEnzymeSupport(
-    original.toNotBeAn,
-    function (type) {
+  toNotBeAn: addEnzymeSupport(original.toNotBeAn, function(type) {
+    // Correct grammar.
+    this.article = 'an';
 
-      // Correct grammar.
-      this.article = 'an';
-
-      // Throw us some errors!
-      this.toNotBeA(type);
-    }
-  ),
+    // Throw us some errors!
+    this.toNotBeA(type);
+  }),
 
   /**
    * Assert a component contains a selector.
@@ -619,22 +552,18 @@ export default (original) => ({
    * A selector your element should have.
    * @return {this} - The expectation context.
    */
-  toContain: addEnzymeSupport(
-    original.toContain,
+  toContain: addEnzymeSupport(original.toContain, function(selector) {
+    const element = this.actual;
 
-    function (selector) {
-      const element = this.actual;
+    const isContained = element.find(selector).length > 0;
+    const stringSelector = stringifySelector(selector);
 
-      const isContained = element.find(selector).length > 0;
-      const stringSelector = stringifySelector(selector);
-
-      assert({
-        ctx: this,
-        statement: isContained,
-        msg: (not) => `Expected element to ${not}contain "${stringSelector}"`,
-      });
-    }
-  ),
+    assert({
+      ctx: this,
+      statement: isContained,
+      msg: not => `Expected element to ${not}contain "${stringSelector}"`,
+    });
+  }),
 
   /**
    * Asserts a component does not contain a selector.
@@ -642,8 +571,5 @@ export default (original) => ({
    * A selector your component should not contain.
    * @return {this} - The expectation context.
    */
-  toNotContain: addEnzymeSupport(
-    original.toNotContain,
-    negate('toContain')
-  ),
+  toNotContain: addEnzymeSupport(original.toNotContain, negate('toContain')),
 });

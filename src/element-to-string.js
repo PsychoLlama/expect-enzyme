@@ -51,7 +51,7 @@ const toPrimitive = (props, key) => {
  * @param  {Object} props - Attributes.
  * @return {String} - html-style attributes.
  */
-const stringifyProps = (props) => (
+const stringifyProps = props =>
   Object.keys(props).reduce((string, key) => {
     if (key === 'children') {
       return string;
@@ -62,12 +62,11 @@ const stringifyProps = (props) => (
     const open = shouldUseBraces ? '{' : '"';
     const close = shouldUseBraces ? '}' : '"';
 
-    const keyValuePair = value === true
-      ? key : `${key}=${open}${value}${close}`;
+    const keyValuePair =
+      value === true ? key : `${key}=${open}${value}${close}`;
 
     return `${string} ${keyValuePair}`;
-  }, '')
-);
+  }, '');
 
 /**
  * Turns any children set into a screen-space friendly string.
@@ -79,9 +78,9 @@ const stringifyChildren = (element, propsString) => {
   const children = Children.toArray(element.props.children);
 
   // Assume all non-objects are primitive.
-  const primitives = children.filter((child) => (
-    typeof child !== 'object' || child === null
-  ));
+  const primitives = children.filter(
+    child => typeof child !== 'object' || child === null,
+  );
 
   const spaceRemains = propsString.length < 20;
   const isPrimitive = children.length === primitives.length;
@@ -92,12 +91,11 @@ const stringifyChildren = (element, propsString) => {
   const truncatePoint = content
     .split('')
     .map((char, index) => ({ char, index }))
-    .filter((entry) => entry.char === ' ')
-    .reduce((max, { index }) => index > 25 ? max : index, 0);
+    .filter(entry => entry.char === ' ')
+    .reduce((max, { index }) => (index > 25 ? max : index), 0);
 
-  const visibleContent = content.length > 25
-    ? `${content.slice(0, truncatePoint)}...`
-    : content;
+  const visibleContent =
+    content.length > 25 ? `${content.slice(0, truncatePoint)}...` : content;
 
   // Hide children if there isn't enough space left.
   // somewhat guesswork involved.
@@ -112,7 +110,7 @@ const stringifyChildren = (element, propsString) => {
  * @param  {ReactElement} element - Any react element.
  * @return {String} - A string representing the element.
  */
-export default function stringify (element) {
+export default function stringify(element) {
   const type = getDisplayName(element.type);
   const props = stringifyProps(element.props);
   const hasChildren = Children.count(element.props.children) > 0;

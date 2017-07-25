@@ -1,4 +1,4 @@
-extends = [
+extends:
   - plugin:react/recommended
   - eslint:recommended
   - llama
@@ -15,3 +15,6 @@ env:
 parser: babel-eslint
 parserOptions:
   sourceType: module
+
+rules:
+  lines-around-comment: off

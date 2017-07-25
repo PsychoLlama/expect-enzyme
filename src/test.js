@@ -8,16 +8,11 @@ import enzymify from './index';
 
 expect.extend(enzymify());
 
-
 describe('expect-enzyme', () => {
   let element;
 
   beforeEach(() => {
-    element = shallow(
-      <div attr="value">
-        children
-      </div>
-    );
+    element = shallow(<div attr="value">children</div>);
   });
 
   it('adds enzyme assertion methods', () => {
@@ -84,19 +79,21 @@ describe('expect-enzyme', () => {
     const element = shallow(<button disabled />);
 
     it('throws if any value matches', () => {
-      const assertion = () => expect(element).toNotHaveProps({
-        missing: 'intentionally so',
-        disabled: true,
-      });
+      const assertion = () =>
+        expect(element).toNotHaveProps({
+          missing: 'intentionally so',
+          disabled: true,
+        });
 
       expect(assertion).toThrow();
     });
 
     it('does not throw if all props are missing', () => {
-      const assertion = () => expect(element).toNotHaveProps({
-        pool: 'closed',
-        clowns: 10,
-      });
+      const assertion = () =>
+        expect(element).toNotHaveProps({
+          pool: 'closed',
+          clowns: 10,
+        });
 
       expect(assertion).toNotThrow();
     });
@@ -276,12 +273,12 @@ describe('expect-enzyme', () => {
   describe('toHaveState()', () => {
     // Must be a stateful component.
     class Element extends React.Component {
-      constructor () {
+      constructor() {
         super();
         this.state = {};
       }
 
-      render () {
+      render() {
         return <div />;
       }
     }
@@ -307,27 +304,30 @@ describe('expect-enzyme', () => {
     });
 
     it('throws if a state does not exist', () => {
-      const assertion = () => expect(element).toHaveState({
-        count: 1,
-      });
+      const assertion = () =>
+        expect(element).toHaveState({
+          count: 1,
+        });
 
       expect(assertion).toThrow();
     });
 
     it('throws if the state does not match', () => {
       element.setState({ count: 1 });
-      const assertion = () => expect(element).toHaveState({
-        count: 5,
-      });
+      const assertion = () =>
+        expect(element).toHaveState({
+          count: 5,
+        });
 
       expect(assertion).toThrow(/5/);
     });
 
     it('does not throw if the state is deeply equal', () => {
       element.setState({ value: { isNested: true } });
-      const assertion = () => expect(element).toHaveState({
-        value: { isNested: true },
-      });
+      const assertion = () =>
+        expect(element).toHaveState({
+          value: { isNested: true },
+        });
 
       expect(assertion).toNotThrow();
     });
@@ -359,9 +359,8 @@ describe('expect-enzyme', () => {
     const element = shallow(<footer onClick={clickHandler} />);
 
     it('does not throw if the output matches', () => {
-      const assertion = () => expect(element).toHaveRendered(
-        <footer onClick={clickHandler} />
-      );
+      const assertion = () =>
+        expect(element).toHaveRendered(<footer onClick={clickHandler} />);
 
       expect(assertion).toNotThrow();
     });
@@ -375,19 +374,17 @@ describe('expect-enzyme', () => {
     it('does not throw if props are equal', () => {
       const object = {};
       const element = shallow(<div style={object} />);
-      const assertion = () => expect(element).toHaveRendered(
-        <div style={{}} />
-      );
+      const assertion = () =>
+        expect(element).toHaveRendered(<div style={{}} />);
 
       expect(assertion).toNotThrow();
     });
 
     it('throws if props are different', () => {
-      const style = {color: 'blue'};
+      const style = { color: 'blue' };
       const element = shallow(<div style={style} />);
-      const assertion = () => expect(element).toHaveRendered(
-        <div style={{color: 'red'}} />
-      );
+      const assertion = () =>
+        expect(element).toHaveRendered(<div style={{ color: 'red' }} />);
 
       expect(assertion).toThrow();
     });
@@ -407,9 +404,8 @@ describe('expect-enzyme', () => {
     });
 
     it('indents the block if the element has props', () => {
-      const assertion = () => expect(element).toHaveRendered(
-        <button value="a value" />
-      );
+      const assertion = () =>
+        expect(element).toHaveRendered(<button value="a value" />);
 
       expect(assertion).toThrow(/\n/);
     });
@@ -427,9 +423,8 @@ describe('expect-enzyme', () => {
     });
 
     it('show a colon if split onto another line', () => {
-      const assertion = () => expect(element).toHaveRendered(
-        <button disabled />
-      );
+      const assertion = () =>
+        expect(element).toHaveRendered(<button disabled />);
 
       expect(assertion).toThrow(/:/);
     });
@@ -459,9 +454,8 @@ describe('expect-enzyme', () => {
     });
 
     it('throws if all props match', () => {
-      const assertion = () => expect(element).toNotHaveRendered(
-        <button disabled value="Click me" />
-      );
+      const assertion = () =>
+        expect(element).toNotHaveRendered(<button disabled value="Click me" />);
 
       expect(assertion).toThrow();
     });
@@ -469,7 +463,7 @@ describe('expect-enzyme', () => {
 
   describe('toNotHaveState()', () => {
     class Element extends React.Component {
-      constructor () {
+      constructor() {
         super();
 
         this.state = {
@@ -478,7 +472,7 @@ describe('expect-enzyme', () => {
         };
       }
 
-      render () {
+      render() {
         return <div />;
       }
     }
@@ -486,19 +480,21 @@ describe('expect-enzyme', () => {
     const element = shallow(<Element />);
 
     it('passes if the state is different', () => {
-      const assertion = () => expect(element).toNotHaveState({
-        missing: 'property',
-        hovering: true,
-      });
+      const assertion = () =>
+        expect(element).toNotHaveState({
+          missing: 'property',
+          hovering: true,
+        });
 
       expect(assertion).toNotThrow();
     });
 
     it('throws if any state matches', () => {
-      const assertion = () => expect(element).toNotHaveState({
-        hovering: false,
-        theme: 'light',
-      });
+      const assertion = () =>
+        expect(element).toNotHaveState({
+          hovering: false,
+          theme: 'light',
+        });
 
       expect(assertion).toThrow(/state/);
     });
@@ -520,9 +516,7 @@ describe('expect-enzyme', () => {
 
   describe('toHaveStyle()', () => {
     const style = { color: 'blue', transition: 'color 1s' };
-    const element = shallow(
-      <div style={style} />
-    );
+    const element = shallow(<div style={style} />);
 
     it('throws if not given an enzyme wrapper', () => {
       const assertion = () => expect(5).toHaveStyle('color', 'red');
@@ -561,19 +555,21 @@ describe('expect-enzyme', () => {
     });
 
     it('throws if any style rule differs', () => {
-      const assertion = () => expect(element).toHaveStyle({
-        display: 'none',
-        color: 'blue',
-      });
+      const assertion = () =>
+        expect(element).toHaveStyle({
+          display: 'none',
+          color: 'blue',
+        });
 
       expect(assertion).toThrow(/style|css/i);
     });
 
     it('does not throw if all styles match', () => {
-      const assertion = () => expect(element).toHaveStyle({
-        transition: style.transition,
-        color: style.color,
-      });
+      const assertion = () =>
+        expect(element).toHaveStyle({
+          transition: style.transition,
+          color: style.color,
+        });
 
       expect(assertion).toNotThrow();
     });
@@ -600,9 +596,11 @@ describe('expect-enzyme', () => {
 
   describe('toNotHaveStyle()', () => {
     const element = shallow(
-      <div style={{
-        color: 'orange',
-      }} />
+      <div
+        style={{
+          color: 'orange',
+        }}
+      />,
     );
 
     it('passes if the color does not exist', () => {
@@ -631,20 +629,22 @@ describe('expect-enzyme', () => {
     });
 
     it('passes if no styles match', () => {
-      const assertion = () => expect(element).toNotHaveStyle({
-        backgroundColor: 'turquoise',
-        color: 'not orange',
-        borderWidth: 2,
-      });
+      const assertion = () =>
+        expect(element).toNotHaveStyle({
+          backgroundColor: 'turquoise',
+          color: 'not orange',
+          borderWidth: 2,
+        });
 
       expect(assertion).toNotThrow();
     });
 
     it('throws if any styles match', () => {
-      const assertion = () => expect(element).toNotHaveStyle({
-        backgroundColor: 'turquoise',
-        color: 'orange',
-      });
+      const assertion = () =>
+        expect(element).toNotHaveStyle({
+          backgroundColor: 'turquoise',
+          color: 'orange',
+        });
 
       expect(assertion).toThrow(/color/);
     });
@@ -671,12 +671,9 @@ describe('expect-enzyme', () => {
       data: PropTypes.string,
     };
 
-    const element = shallow(
-      <Component />,
-      {
-        context: { data: 'probably' },
-      }
-    );
+    const element = shallow(<Component />, {
+      context: { data: 'probably' },
+    });
 
     it('returns the assertion', () => {
       const expectation = expect(element);
@@ -692,25 +689,28 @@ describe('expect-enzyme', () => {
     });
 
     it('throws when the context does not match', () => {
-      const assertion = () => expect(element).toHaveContext({
-        propertyExists: false,
-      });
+      const assertion = () =>
+        expect(element).toHaveContext({
+          propertyExists: false,
+        });
 
       expect(assertion).toThrow(/context/);
     });
 
     it('does not throw when the context matches', () => {
-      const assertion = () => expect(element).toHaveContext({
-        data: 'probably',
-      });
+      const assertion = () =>
+        expect(element).toHaveContext({
+          data: 'probably',
+        });
 
       expect(assertion).toNotThrow();
     });
 
     it('shows the expected object for error messages', () => {
-      const assertion = () => expect(element).toHaveContext({
-        data: { stringify: 'me' },
-      });
+      const assertion = () =>
+        expect(element).toHaveContext({
+          data: { stringify: 'me' },
+        });
 
       expect(assertion).toNotThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
@@ -738,17 +738,15 @@ describe('expect-enzyme', () => {
       string: PropTypes.string,
     };
 
-    const element = shallow(
-      <Component />,
-      {
-        context: { string: 'a tiny context variable' },
-      }
-    );
+    const element = shallow(<Component />, {
+      context: { string: 'a tiny context variable' },
+    });
 
     it('passes if the context is not contained', () => {
-      const assertion = () => expect(element).toNotHaveContext({
-        missing: 'not defined in the context types',
-      });
+      const assertion = () =>
+        expect(element).toNotHaveContext({
+          missing: 'not defined in the context types',
+        });
 
       expect(assertion).toNotThrow();
     });
@@ -756,9 +754,10 @@ describe('expect-enzyme', () => {
     it('fails if the context type matches', () => {
       const { string } = element.context();
 
-      const assertion = () => expect(element).toNotHaveContext({
-        string,
-      });
+      const assertion = () =>
+        expect(element).toNotHaveContext({
+          string,
+        });
 
       expect(assertion).toThrow(/context/);
     });
@@ -787,7 +786,7 @@ describe('expect-enzyme', () => {
         <aside />
 
         <Component enabled className="component" />
-      </div>
+      </div>,
     );
 
     it('only affects enzyme types', () => {
@@ -835,9 +834,8 @@ describe('expect-enzyme', () => {
         <aside />
 
         <Component enabled className="component" />
-      </div>
+      </div>,
     );
-
 
     it('only affects enzyme types', () => {
       expect(() => expect('hello').toNotContain('lettuce')).toNotThrow();
@@ -861,9 +859,12 @@ describe('expect-enzyme', () => {
   });
 
   describe('toBeA()', () => {
-    const createElement = (type) => shallow(React.createElement(type));
+    const createElement = type => shallow(React.createElement(type));
     const Child = () => <div>Nested component</div>;
-    const Composite = () => <div><Child /></div>;
+    const Composite = () =>
+      <div>
+        <Child />
+      </div>;
     const element = createElement(Composite);
 
     it('passes control if actual is not an enzyme wrapper', () => {
@@ -982,7 +983,11 @@ describe('expect-enzyme', () => {
 
     it('works with components', () => {
       const Component = () => <div />;
-      const element = shallow(<div><Component /></div>);
+      const element = shallow(
+        <div>
+          <Component />
+        </div>,
+      );
       const component = element.find('Component');
 
       expect(() => expect(component).toNotBeA(Component)).toThrow();
@@ -1003,7 +1008,11 @@ describe('expect-enzyme', () => {
 
   describe('toNotBeAn()', () => {
     const Item = () => <div />;
-    const element = shallow(<div><Item /></div>);
+    const element = shallow(
+      <div>
+        <Item />
+      </div>,
+    );
     const item = element.find('Item');
 
     it('throws if the type matches', () => {

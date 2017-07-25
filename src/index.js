@@ -3,11 +3,10 @@ import expect from 'expect';
 import createAssertions from './assertions';
 
 // eslint-disable-next-line
-module.exports = function enzymify () {
+module.exports = function enzymify() {
   const asserted = expect();
 
   return createAssertions({
-
     // Custom.
     toNotHaveRendered: asserted.toNotHaveRendered,
     toNotHaveContext: asserted.toNotHaveContext,

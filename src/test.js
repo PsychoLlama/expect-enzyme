@@ -12,7 +12,12 @@ describe('expect-enzyme', () => {
   let element;
 
   beforeEach(() => {
-    element = shallow(<div attr="value">children</div>);
+    const value = { enabled: true };
+    element = shallow(
+      <div attr="value" value={value}>
+        children
+      </div>,
+    );
   });
 
   it('adds enzyme assertion methods', () => {
@@ -122,6 +127,21 @@ describe('expect-enzyme', () => {
       expect(assertion).toThrow(/property "attr"/i);
     });
 
+    it('checks by equality, not reference', () => {
+      const assertion = () =>
+        expect(element).toHaveProp('value', {
+          enabled: true,
+        });
+
+      expect(assertion).toNotThrow(/prop/i);
+    });
+
+    it('adds the constructor name for objects', () => {
+      const assertion = () => expect(element).toHaveProp('value', {});
+
+      expect(assertion).toThrow(/Object {...}/);
+    });
+
     it('returns the expectation context', () => {
       const expectation = expect(element);
       const result = expectation.toHaveProp('attr');
@@ -148,7 +168,15 @@ describe('expect-enzyme', () => {
   });
 
   describe('toNotHaveProp()', () => {
-    const element = shallow(<div disabled value="offline" />);
+    const element = shallow(
+      <div
+        disabled
+        value="offline"
+        status={{
+          eating: 'pizza',
+        }}
+      />,
+    );
 
     it('throws if the prop exists', () => {
       const assertion = () => expect(element).toNotHaveProp('disabled');
@@ -160,6 +188,15 @@ describe('expect-enzyme', () => {
       const assertion = () => expect(element).toNotHaveProp('potato');
 
       expect(assertion).toNotThrow();
+    });
+
+    it('throws if the content matches', () => {
+      const assertion = () =>
+        expect(element).toNotHaveProp('status', {
+          eating: 'pizza',
+        });
+
+      expect(assertion).toThrow(/prop/i);
     });
 
     it('does not throw if the value is different', () => {

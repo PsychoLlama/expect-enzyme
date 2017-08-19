@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Deep equal check `.to(Not)HaveProp` value.
+
 ## v1.1.1
 ### Fixed
 - Undefined `className` props could break the `.to(Not)HaveClass` assertions.

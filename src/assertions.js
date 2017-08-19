@@ -170,11 +170,16 @@ export default original => ({
     if (value !== undefined) {
       assert({
         ctx: this,
-        statement: actual[prop] === value,
+        statement: deepEqual(actual[prop], value),
         expected,
         actual: real,
-        msg: not =>
-          `Expected ${displayName} property "${prop}" to ${not}be "${value}"`,
+        msg: not => {
+          const constructor = (value.constructor || {}).name || 'Object';
+          const prettyValue =
+            value instanceof Object ? `${constructor} {...}` : value;
+
+          return `Expected ${displayName} property "${prop}" to ${not}be "${prettyValue}"`;
+        },
       });
     }
 

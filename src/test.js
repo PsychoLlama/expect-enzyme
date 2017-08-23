@@ -471,6 +471,12 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow(/:/);
     });
+
+    it('throws if the element does not exist', () => {
+      const assertion = () => expect(element.find('Nope')).toHaveRendered();
+
+      expect(assertion).toThrow();
+    });
   });
 
   describe('toNotHaveRendered()', () => {
@@ -495,6 +501,19 @@ describe('expect-enzyme', () => {
         expect(element).toNotHaveRendered(<button disabled value="Click me" />);
 
       expect(assertion).toThrow();
+    });
+
+    it('passes if the element does not exist', () => {
+      const assertion = () => expect(element.find('Nope')).toNotHaveRendered();
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if args are given when the component does not exist', () => {
+      const assertion = () =>
+        expect(element.find('Nope')).toNotHaveRendered(<div />);
+
+      expect(assertion).toThrow(/render/i);
     });
   });
 

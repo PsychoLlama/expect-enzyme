@@ -2,6 +2,9 @@
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
 ## Unreleased
+### Added
+- Ability to call `.toNotHaveRendered()` on non-existent elements (throws if any parameters are given).
+
 ### Fixed
 - Deep equal check `.to(Not)HaveProp` value.
 

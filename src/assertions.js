@@ -327,6 +327,16 @@ export default original => ({
   toHaveRendered: addEnzymeSupport(original.toHaveRendered, function(element) {
     const { actual } = this;
 
+    if (isNegated(this) && !actual.length) {
+      assert({
+        statement: element === undefined,
+        msg:
+          '.toNotHaveRendered(...) was given args, but no element was found.',
+      });
+
+      return;
+    }
+
     assert({
       ctx: this,
       statement: actual.equals(element),

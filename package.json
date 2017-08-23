@@ -14,7 +14,8 @@
   },
   "lint-staged": {
     "*.js": [
-      "npm run prettier -- --write"
+      "npm run prettier -- --write",
+      "git add"
     ]
   },
   "repository": {

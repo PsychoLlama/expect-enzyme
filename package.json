@@ -1,6 +1,6 @@
 {
   "name": "expect-enzyme",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Enzyme assertions for mjackson's Expect library",
   "main": "dist/index.js",
   "scripts": {

@@ -1,9 +1,9 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
-## Unreleased
+## v1.1.2
 ### Fixed
-- Deep equal check `.to(Not)HaveProp` value.
+- Use deep equality (not strict equality) when checking `.to(Not)HaveProp` values.
 
 ## v1.1.1
 ### Fixed

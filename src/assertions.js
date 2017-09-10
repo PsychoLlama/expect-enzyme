@@ -334,17 +334,18 @@ export default original => ({
     if (negated && !exists && testEquality) {
       assert({
         statement: false,
-        msg: `Expected element not to match, but it didn't exist`,
+        msg: "Expected element not to match, but it didn't exist",
       });
     }
 
     // Handle cases where `.toHaveRendered()` was called with no args.
     if (!negated) {
-      const unexpectedNull = testEquality ? false : actual.equals(null);
+      const unexpectedNull =
+        !exists || testEquality ? false : actual.equals(null);
 
       assert({
         statement: exists && !unexpectedNull,
-        msg: `Expected element to have rendered`,
+        msg: `Expected element to have rendered something`,
       });
     }
 

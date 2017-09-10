@@ -479,6 +479,12 @@ describe('expect-enzyme', () => {
       expect(assertion).toThrow(/render/i);
     });
 
+    it('throws if the element does not exist with no matcher', () => {
+      const assertion = () => expect(element.find('bacon')).toHaveRendered();
+
+      expect(assertion).toThrow(/render/i);
+    });
+
     it('does not throw if no elements were provided', () => {
       const assertion = () => expect(element).toHaveRendered();
 

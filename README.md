@@ -287,7 +287,7 @@ Error: Expected state "clickCount" to equal 3
 > Negation: `.toNotHaveState()`
 
 #### `.toHaveRendered(element)`
-Asserts the component rendered the given value.
+Asserts the component rendered the given value, or just that it rendered _something_.
 
 ```js
 // The first event looks exactly like this.
@@ -298,6 +298,9 @@ expect(listOfRegrets).toHaveRendered(null)
 
 // I don't trust this button.
 expect(stockAdvice).toHaveRendered(<button disabled={false}>Buy now!</button>)
+
+// It exists and it didn't render `null`.
+expect(singers.find('Elvis')).toHaveRendered()
 ```
 
 ##### Error
@@ -310,6 +313,8 @@ Error: Expected element to equal "null"
 
 Error: Expected element to equal:
    <button disabled={false}>Buy now!</button>
+
+Error: Expected element to have rendered something
 ```
 
 > Negation: `.toNotHaveRendered()`

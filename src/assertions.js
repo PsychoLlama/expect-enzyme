@@ -326,6 +326,32 @@ export default original => ({
    */
   toHaveRendered: addEnzymeSupport(original.toHaveRendered, function(element) {
     const { actual } = this;
+    const exists = Boolean(actual && actual.length);
+    const testEquality = element !== undefined;
+    const negated = isNegated(this);
+
+    // `.toNotHaveRendered(...)` called on non-existent element.
+    if (negated && !exists && testEquality) {
+      assert({
+        statement: false,
+        msg: `Expected element not to match, but it didn't exist`,
+      });
+    }
+
+    // Handle cases where `.toHaveRendered()` was called with no args.
+    if (!negated) {
+      const unexpectedNull = testEquality ? false : actual.equals(null);
+
+      assert({
+        statement: exists && !unexpectedNull,
+        msg: `Expected element to have rendered`,
+      });
+    }
+
+    // Being used as `.toExist()`.
+    if (!testEquality) {
+      return;
+    }
 
     assert({
       ctx: this,

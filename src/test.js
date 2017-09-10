@@ -471,6 +471,33 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow(/:/);
     });
+
+    it('throws if the element does not exist', () => {
+      const assertion = () =>
+        expect(element.find('aside')).toHaveRendered(<div />);
+
+      expect(assertion).toThrow(/render/i);
+    });
+
+    it('throws if the element does not exist with no matcher', () => {
+      const assertion = () => expect(element.find('bacon')).toHaveRendered();
+
+      expect(assertion).toThrow(/render/i);
+    });
+
+    it('does not throw if no elements were provided', () => {
+      const assertion = () => expect(element).toHaveRendered();
+
+      expect(assertion).toNotThrow();
+    });
+
+    it('throws if the value is null when no matcher was given', () => {
+      const Component = () => null;
+      const element = shallow(<Component />);
+      const assertion = () => expect(element).toHaveRendered();
+
+      expect(assertion).toThrow(/render/i);
+    });
   });
 
   describe('toNotHaveRendered()', () => {
@@ -494,7 +521,22 @@ describe('expect-enzyme', () => {
       const assertion = () =>
         expect(element).toNotHaveRendered(<button disabled value="Click me" />);
 
-      expect(assertion).toThrow();
+      expect(assertion).toThrow(/equal/i);
+    });
+
+    // If the user didn't expect it to exist, they wouldn't
+    // have passed an element to match against.
+    it('throws if the element does not exist', () => {
+      const assertion = () =>
+        expect(element.find('bacon')).toNotHaveRendered(<div />);
+
+      expect(assertion).toThrow(/exist/);
+    });
+
+    it('passes if the element does not exist but has no matcher', () => {
+      const assertion = () => expect(element.find('bacon')).toNotHaveRendered();
+
+      expect(assertion).toNotThrow();
     });
   });
 

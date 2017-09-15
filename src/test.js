@@ -538,6 +538,12 @@ describe('expect-enzyme', () => {
 
       expect(assertion).toNotThrow();
     });
+
+    it('fails if the element rendered something with no matcher', () => {
+      const assertion = () => expect(element).toNotHaveRendered();
+
+      expect(assertion).toThrow(/render/i);
+    });
   });
 
   describe('toNotHaveState()', () => {

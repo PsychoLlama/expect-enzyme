@@ -349,6 +349,13 @@ export default original => ({
       });
     }
 
+    if (negated && !testEquality) {
+      assert({
+        statement: !exists || actual.equals(null),
+        msg: `Expected element to not have rendered anything`,
+      });
+    }
+
     // Being used as `.toExist()`.
     if (!testEquality) {
       return;

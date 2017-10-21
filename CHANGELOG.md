@@ -1,6 +1,10 @@
 # Changelog
 `expect-enzyme` uses [this changelog style](http://keepachangelog.com/en/0.3.0/) and follows [semver](http://semver.org/).
 
+## v1.3.0
+### Added
+- Support for Enzyme 3 and React 16.
+
 ## v1.2.1
 ### Fixed
 - `.toHaveRendered()` without args was passing even if the element rendered non-null values.

@@ -749,7 +749,11 @@ describe('expect-enzyme', () => {
   });
 
   describe('toHaveContext()', () => {
-    const Component = () => <div />;
+    class Component extends React.Component {
+      render() {
+        return null;
+      }
+    }
 
     // React requires this to be specified, or context won't work.
     Component.contextTypes = {
@@ -816,7 +820,11 @@ describe('expect-enzyme', () => {
   });
 
   describe('toNotHaveContext()', () => {
-    const Component = () => <div />;
+    class Component extends React.Component {
+      render() {
+        return null;
+      }
+    }
 
     // React requires this to be specified, or context won't work.
     Component.contextTypes = {

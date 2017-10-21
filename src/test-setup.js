@@ -1,4 +1,8 @@
+import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
+import enzyme from 'enzyme';
+
+enzyme.configure({ adapter: new Adapter() });
 
 // Shhh, React won't know the difference!
 const { window } = new JSDOM('');

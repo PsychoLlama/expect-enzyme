@@ -1,4 +1,3 @@
-import { ShallowWrapper, ReactWrapper } from 'enzyme';
 import elementToString from './element-to-string';
 import getDisplayName from 'react-display-name';
 import stringifyObject from 'stringify-object';
@@ -74,8 +73,18 @@ const negate = methodName =>
  * @param  {Any} actual - The value to check.
  * @return {Boolean} - Whether it's enzyme.
  */
-const isEnzymeWrapper = actual =>
-  actual instanceof ShallowWrapper || actual instanceof ReactWrapper;
+const isEnzymeWrapper = actual => {
+  if (!actual) {
+    return false;
+  }
+
+  // Duck typed (instanceof can break if duplicate package instances exist).
+  return Boolean(
+    typeof actual.setState === 'function' &&
+      typeof actual.findWhere === 'function' &&
+      typeof actual.debug === 'function',
+  );
+};
 
 /**
  * Throws an error if the given argument isn't an enzyme wrapper.

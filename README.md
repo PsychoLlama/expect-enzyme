@@ -48,16 +48,16 @@ expect(clickCounter).toHaveState({ clicks: 1 })
 
 You get the idea.
 
-## Using it
-> Note: all expect extensions are global.
-
-### Installation
+## Installation
 
 ```sh
-$ npm install --save-dev expect expect-enzyme
+$ npm install --save-dev expect@1.x.x expect-enzyme
 ```
 
-If node starts yelling about missing packages, you might wanna install this stuff too. And skim [this enzyme docs page](http://airbnb.io/enzyme/docs/installation/index.html).
+> **WARNING:** `expect` merged with the [Jest](https://github.com/facebook/jest) project and underwent massive changes, leaving this library incompatible. Using anything later than `v1` may literally explode the universe.<br />
+IMHO, it was a good change. Jest is an incredible test framework. They'll do well by `expect`.
+
+If node starts yelling about missing packages, you might wanna install these too, then skim [the enzyme install docs](http://airbnb.io/enzyme/docs/installation/index.html).
 
 ```sh
 # Setup is weird. This should help.

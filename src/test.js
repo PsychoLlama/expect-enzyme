@@ -507,7 +507,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toHaveStyle()', () => {
+  describe.only('toHaveStyle()', () => {
     const style = { color: 'blue', transition: 'color 1s' };
     const element = shallow(<div style={style} />);
 
@@ -565,25 +565,6 @@ describe('expect-enzyme', () => {
         });
 
       expect(assertion).not.toThrow();
-    });
-
-    it('returns the assertion', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveStyle('color');
-
-      expect(result).toBe(expectation);
-    });
-
-    it('shows the diff', () => {
-      const expected = { color: 'potato' };
-      try {
-        expect(element).toHaveStyle(expected);
-        throw new Error('Should not throw');
-      } catch (error) {
-        expect(error.message).toNotMatch(/should/);
-        expect(error.actual).toBe(element.prop('style'));
-        expect(error.expected).toBe(expected);
-      }
     });
   });
 

@@ -377,12 +377,10 @@ export default original => {
      * @return {this} - The expectation context.
      */
     toHaveStyle: addEnzymeSupport(original.toHaveStyle, function(
+      element,
       property,
       value,
     ) {
-      const element = this.actual;
-      assertIsEnzymeWrapper(element);
-
       const style = element.prop('style') || {};
       const displayName = element.name();
 
@@ -393,40 +391,47 @@ export default original => {
               [property]: value,
             };
 
-      Object.keys(styles).forEach(property => {
+      for (const property of Object.keys(styles)) {
         const value = styles[property];
+        const pass =
+          value === undefined
+            ? style.hasOwnProperty(property)
+            : style[property] === value;
+
+        if ((pass && !this.isNot) || (!pass && this.isNot)) {
+          continue;
+        }
+
+        const not = this.isNot ? 'not ' : '';
 
         // "value" parameter is optional.
         if (value === undefined) {
           // Make sure the property is specified.
-          assert({
-            ctx: this,
-            statement: style.hasOwnProperty(property),
-            msg: not =>
+          return {
+            pass,
+            message: () =>
               `Expected ${displayName} to ${not}have css property "${property}"`,
-          });
-        } else {
-          // Show what css is expected.
-          const styleString = stringifyObject(
-            { [property]: value },
-            {
-              inlineCharacterLimit: Infinity,
-            },
-          );
-
-          // Make sure the value matches.
-          assert({
-            ctx: this,
-            statement: style[property] === value,
-            expected: styles,
-            actual: style,
-            msg: not =>
-              `Expected ${displayName} to ${not}have css ${styleString}`,
-          });
+          };
         }
-      });
 
-      return this;
+        // Show what css is expected.
+        const styleString = stringifyObject(
+          { [property]: value },
+          {
+            inlineCharacterLimit: Infinity,
+          },
+        );
+
+        // Make sure the value matches.
+        return {
+          pass,
+          message: () =>
+            `Expected ${displayName} to ${not}have css ${styleString}`,
+        };
+      }
+
+      // Always pass.
+      return { pass: !this.isNot };
     }),
 
     /**

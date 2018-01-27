@@ -243,45 +243,26 @@ export default original => {
      * @param  {String} className - The class the component should have.
      * @return {this} - The expectation context.
      */
-    toHaveClass: addEnzymeSupport(original.toHaveClass, function(className) {
-      const element = this.actual;
-
+    toHaveClass: addEnzymeSupport(original.toHaveClass, function(
+      element,
+      className,
+    ) {
       // Only works for enzyme elements.
-      assertIsEnzymeWrapper(element);
-      const actual = element.prop('className')
-        ? element.prop('className').split(' ')
-        : [];
-
-      let expected = String(className).split(' ');
-
-      if (isNegated(this)) {
-        // Reimagine `actual` without the classname.
-        expected = actual.filter(value => value !== className);
-      } else {
-        expected.push(...actual);
+      if (!isEnzymeWrapper(element)) {
+        return {
+          pass: false,
+          message: () => `Expected an enzyme wrapper, got ${element}.`,
+        };
       }
 
-      assert({
-        ctx: this,
-        statement: element.hasClass(className),
-        expected,
-        actual,
-        msg: not =>
+      const not = this.isNot ? 'not ' : '';
+
+      return {
+        pass: element.hasClass(className),
+        message: () =>
           `Expected ${element.name()} to ${not}have class "${className}"`,
-      });
-
-      return this;
+      };
     }),
-
-    /**
-     * Asserts a component does not have a class name.
-     * @param  {String} className - The class it really shouldn't have.
-     * @return {this} - The expectation context.
-     */
-    toNotHaveClass: addEnzymeSupport(
-      original.toNotHaveClass,
-      negate('toHaveClass'),
-    ),
 
     /**
      * Assert the element contains the given state.

@@ -210,7 +210,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toHaveClass()', () => {
+  describe.only('toHaveClass()', () => {
     const element = shallow(<div className="class-one classTwo class_three" />);
 
     it('throws if actual is not an enzyme wrapper', () => {
@@ -230,67 +230,21 @@ describe('expect-enzyme', () => {
 
       expect(assertion).not.toThrow();
     });
-
-    it('returns the assertion', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveClass('classTwo');
-
-      expect(result).toBe(expectation);
-    });
-
-    it('shows the diff', () => {
-      try {
-        expect(element).toHaveClass('some-class');
-        throw new Error('Should have thrown');
-      } catch (error) {
-        expect(error.message).toNotMatch(/thrown/);
-        expect(error.actual).toEqual(element.prop('className').split(' '));
-        expect(error.expected).toEqual([
-          'some-class',
-          ...element.prop('className').split(' '),
-        ]);
-      }
-    });
-
-    it('shows a diff when the className is undefined', () => {
-      const element = shallow(<div />);
-
-      try {
-        expect(element).toHaveClass('non-existent-class');
-        throw new Error('Should have thrown');
-      } catch (error) {
-        expect(error.message).toNotMatch(/(thrown|split)/);
-        expect(error.actual).toEqual([]);
-        expect(error.expected).toEqual(['non-existent-class']);
-      }
-    });
   });
 
-  describe('toNotHaveClass()', () => {
+  describe.only('not.toHaveClass()', () => {
     const element = shallow(<div className="profile" />);
 
     it('throws if the class is contained', () => {
-      const assertion = () => expect(element).toNotHaveClass('profile');
+      const assertion = () => expect(element).not.toHaveClass('profile');
 
       expect(assertion).toThrow(/profile/);
     });
 
     it('does not throw if the class is missing', () => {
-      const assertion = () => expect(element).toNotHaveClass('elvis');
+      const assertion = () => expect(element).not.toHaveClass('elvis');
 
       expect(assertion).not.toThrow();
-    });
-
-    it('shows the diff', () => {
-      const element = shallow(<div className="profile potato" />);
-      try {
-        expect(element).toNotHaveClass('potato');
-        throw new Error('Should have thrown.');
-      } catch (error) {
-        expect(error.message).toNotMatch(/thrown/);
-        expect(error.actual).toEqual(['profile', 'potato']);
-        expect(error.expected).toEqual(['profile']);
-      }
     });
   });
 

@@ -167,21 +167,29 @@ export default original => ({
 
     const actual = wrapper.props();
     const displayName = wrapper.name();
-    const real = { [prop]: actual[prop] };
-    const expected = { [prop]: value };
 
     const hasProp = actual.hasOwnProperty(prop);
 
     const not = this.isNot ? 'not ' : '';
-    if ((!this.isNot || value === undefined) && !hasProp) {
+    const expectedPropMissing = !this.isNot && !hasProp;
+    const unexpectedlyHasProp = this.isNot && hasProp;
+    const noValueAssertion = value === undefined;
+
+    if ((unexpectedlyHasProp || expectedPropMissing) && noValueAssertion) {
       return {
-        pass: false,
+        pass: this.isNot,
         message: () => `Expected ${displayName} to ${not}have prop "${prop}"`,
       };
     }
 
+    if (noValueAssertion) {
+      return {
+        pass: !this.isNot,
+      };
+    }
+
     return {
-      pass: value === undefined ? true : deepEqual(actual[prop], value),
+      pass: deepEqual(actual[prop], value),
       message: () => {
         const constructor = (value.constructor || {}).name || 'Object';
         const prettyValue =
@@ -191,15 +199,6 @@ export default original => ({
       },
     };
   }),
-
-  /**
-   * Asserts an element doesn't match the given prop. If no
-   * value is specified, it asserts the prop doesn't exist at all.
-   * @param  {String} prop - The expected prop.
-   * @param  {Any} [value] - The value it shouldn't be.
-   * @return {this} - The expectation context.
-   */
-  toNotHaveProp: addEnzymeSupport(original.toNotHaveProp, negate('toHaveProp')),
 
   /**
    * Verifies a component was given certain props.

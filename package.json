@@ -10,7 +10,7 @@
     "build": "babel src/ -d dist/",
     "prepublish": "npm run build",
     "precommit": "lint-staged",
-    "prettier": "prettier --single-quote --trailing-comma all"
+    "prettier": "prettier"
   },
   "lint-staged": {
     "*.js": [

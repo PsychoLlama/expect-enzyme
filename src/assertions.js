@@ -130,17 +130,17 @@ const stringifySelector = selector => {
  * @return {Function} - An assertion method.
  */
 const addEnzymeSupport = (defaultAssertion, enzymeAssertion) =>
-  function assertion() {
+  function assertion(actual) {
     // Is the value an enzyme wrapper?
-    if (isEnzymeWrapper(this.actual)) {
+    if (isEnzymeWrapper(actual)) {
       // Use the enzyme assertion.
-      enzymeAssertion.apply(this, arguments);
+      return enzymeAssertion.apply(this, arguments);
     } else if (defaultAssertion) {
       return defaultAssertion.apply(this, arguments);
     }
 
     // There's no fallback assertion.
-    assertIsEnzymeWrapper(this.actual);
+    assertIsEnzymeWrapper(actual);
 
     // Chain 'em assertions.
     return this;
@@ -158,41 +158,38 @@ export default original => ({
    * @param  {Any} [value=true] - An expected value.
    * @return {this} - The current expect assertion.
    */
-  toHaveProp: addEnzymeSupport(original.toHaveProp, function(prop, value) {
-    assertIsEnzymeWrapper(this.actual);
+  toHaveProp: addEnzymeSupport(original.toHaveProp, function(
+    wrapper,
+    prop,
+    value,
+  ) {
+    assertIsEnzymeWrapper(wrapper);
 
-    const actual = this.actual.props();
-    const displayName = this.actual.name();
+    const actual = wrapper.props();
+    const displayName = wrapper.name();
     const real = { [prop]: actual[prop] };
     const expected = { [prop]: value };
 
-    if (!isNegated(this) || value === undefined) {
-      assert({
-        ctx: this,
-        expected,
-        actual: real,
-        statement: actual.hasOwnProperty(prop),
-        msg: not => `Expected ${displayName} to ${not}have prop "${prop}"`,
-      });
+    const hasProp = actual.hasOwnProperty(prop);
+
+    const not = this.isNot ? 'not ' : '';
+    if ((!this.isNot || value === undefined) && !hasProp) {
+      return {
+        pass: false,
+        message: () => `Expected ${displayName} to ${not}have prop "${prop}"`,
+      };
     }
 
-    if (value !== undefined) {
-      assert({
-        ctx: this,
-        statement: deepEqual(actual[prop], value),
-        expected,
-        actual: real,
-        msg: not => {
-          const constructor = (value.constructor || {}).name || 'Object';
-          const prettyValue =
-            value instanceof Object ? `${constructor} {...}` : value;
+    return {
+      pass: value === undefined ? true : deepEqual(actual[prop], value),
+      message: () => {
+        const constructor = (value.constructor || {}).name || 'Object';
+        const prettyValue =
+          value instanceof Object ? `${constructor} {...}` : value;
 
-          return `Expected ${displayName} property "${prop}" to ${not}be "${prettyValue}"`;
-        },
-      });
-    }
-
-    return this;
+        return `Expected ${displayName} property "${prop}" to ${not}be "${prettyValue}"`;
+      },
+    };
   }),
 
   /**

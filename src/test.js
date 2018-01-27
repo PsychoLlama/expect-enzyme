@@ -568,7 +568,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toNotHaveStyle()', () => {
+  describe.only('not.toHaveStyle()', () => {
     const element = shallow(
       <div
         style={{
@@ -578,33 +578,34 @@ describe('expect-enzyme', () => {
     );
 
     it('passes if the color does not exist', () => {
-      const assertion = () => expect(element).toNotHaveStyle('transition');
+      const assertion = () => expect(element).not.toHaveStyle('transition');
 
       expect(assertion).not.toThrow();
     });
 
     it('throws if the style exists', () => {
-      const assertion = () => expect(element).toNotHaveStyle('color');
+      const assertion = () => expect(element).not.toHaveStyle('color');
 
       expect(assertion).toThrow();
     });
 
     it('passes if the style is different', () => {
       const expectation = expect(element);
-      const assertion = () => expectation.toNotHaveStyle('color', 'crimson');
+      const assertion = () => expectation.not.toHaveStyle('color', 'crimson');
 
       expect(assertion).not.toThrow();
     });
 
     it('throws if the style matches', () => {
-      const assertion = () => expect(element).toNotHaveStyle('color', 'orange');
+      const assertion = () =>
+        expect(element).not.toHaveStyle('color', 'orange');
 
       expect(assertion).toThrow(/color/);
     });
 
     it('passes if no styles match', () => {
       const assertion = () =>
-        expect(element).toNotHaveStyle({
+        expect(element).not.toHaveStyle({
           backgroundColor: 'turquoise',
           color: 'not orange',
           borderWidth: 2,
@@ -615,25 +616,12 @@ describe('expect-enzyme', () => {
 
     it('throws if any styles match', () => {
       const assertion = () =>
-        expect(element).toNotHaveStyle({
+        expect(element).not.toHaveStyle({
           backgroundColor: 'turquoise',
           color: 'orange',
         });
 
       expect(assertion).toThrow(/color/);
-    });
-
-    it('shows a diff', () => {
-      const expected = { color: 'orange' };
-
-      try {
-        expect(element).toNotHaveStyle(expected);
-        throw new Error('Inadvertantly passed.');
-      } catch (error) {
-        expect(error.message).toNotMatch(/passed/);
-        expect(error.actual).toBe(element.prop('style'));
-        expect(error.expected).toBe(expected);
-      }
     });
   });
 

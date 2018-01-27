@@ -435,18 +435,6 @@ export default original => {
     }),
 
     /**
-     * Asserts an element does not have a set of styles.
-     * @param  {String|Object} name - Either an object of styles
-     * or the name of a style property.
-     * @param  {Any} [value] - The style it shouldn't be.
-     * @return {this} - The expectation context.
-     */
-    toNotHaveStyle: addEnzymeSupport(
-      original.toNotHaveStyle,
-      negate('toHaveStyle'),
-    ),
-
-    /**
      * Asserts a component has the given context.
      * @param  {Object} context - What you expect the context to equal.
      * @return {this} - The expectation context.

@@ -468,7 +468,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toNotHaveState()', () => {
+  describe.only('not.toHaveState()', () => {
     class Element extends React.Component {
       constructor() {
         super();
@@ -488,7 +488,7 @@ describe('expect-enzyme', () => {
 
     it('passes if the state is different', () => {
       const assertion = () =>
-        expect(element).toNotHaveState({
+        expect(element).not.toHaveState({
           missing: 'property',
           hovering: true,
         });
@@ -498,26 +498,12 @@ describe('expect-enzyme', () => {
 
     it('throws if any state matches', () => {
       const assertion = () =>
-        expect(element).toNotHaveState({
+        expect(element).not.toHaveState({
           hovering: false,
           theme: 'light',
         });
 
       expect(assertion).toThrow(/state/);
-    });
-
-    it('shows a diff', () => {
-      const expected = { clicks: 48 };
-      element.setState(expected);
-
-      try {
-        expect(element).toNotHaveState(expected);
-        throw new Error('Should not survive');
-      } catch (error) {
-        expect(error.message).toNotMatch(/should/);
-        expect(error.actual).toEqual(element.state('clicks'));
-        expect(error.expected).toBe(expected.clicks);
-      }
     });
   });
 

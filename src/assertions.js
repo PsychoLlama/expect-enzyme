@@ -281,26 +281,17 @@ export default original => {
         const expected = expectedState[key];
 
         // Deeply check equivalence.
-        return !deepEqual(actual, expected);
+        const equal = deepEqual(actual, expected);
+        return this.isNot ? equal : !equal;
       });
 
       const not = this.isNot ? 'not ' : '';
       return {
-        pass: !key,
+        pass: this.isNot ? Boolean(key) : !key,
         message: () =>
           `Expected state "${key}" to ${not}equal ${expectedState[key]}`,
       };
     }),
-
-    /**
-     * Asserts a component does not contain the given state.
-     * @param  {Object} state - State it should definitely not contain.
-     * @return {this} - The expectation context.
-     */
-    toNotHaveState: addEnzymeSupport(
-      original.toNotHaveState,
-      negate('toHaveState'),
-    ),
 
     /**
      * Asserts a component matches the given element output.

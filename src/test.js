@@ -25,17 +25,10 @@ describe('expect-enzyme', () => {
     expect(expect().toHaveProp).toBeA(Function);
   });
 
-  describe('toHaveProps()', () => {
+  describe.only('toHaveProps()', () => {
     const createAssertion = (props, el = element) => () => {
       expect(el).toHaveProps(props);
     };
-
-    it('returns the context', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveProps({});
-
-      expect(result).toBe(expectation);
-    });
 
     it('throws if no props are given', () => {
       expect(createAssertion()).toThrow(/props object/i);
@@ -80,22 +73,22 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toNotHaveProps()', () => {
+  describe.only('not.toHaveProps()', () => {
     const element = shallow(<button disabled />);
 
     it('throws if any value matches', () => {
       const assertion = () =>
-        expect(element).toNotHaveProps({
+        expect(element).not.toHaveProps({
           missing: 'intentionally so',
           disabled: true,
         });
 
-      expect(assertion).toThrow();
+      expect(assertion).toThrow(/disabled/);
     });
 
     it('does not throw if all props are missing', () => {
       const assertion = () =>
-        expect(element).toNotHaveProps({
+        expect(element).not.toHaveProps({
           pool: 'closed',
           clowns: 10,
         });

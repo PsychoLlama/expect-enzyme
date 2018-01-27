@@ -441,41 +441,32 @@ export default original => {
      */
     toHaveContext: addEnzymeSupport(
       original.toHaveContext,
-      function toHaveContext(context) {
-        const element = this.actual;
-        assertIsEnzymeWrapper(element);
-
+      function toHaveContext(element, context) {
         const actual = element.context();
 
-        Object.keys(context).forEach(property => {
+        for (const property of Object.keys(context)) {
           const expected = context[property];
           const expectedString = stringifyObject(expected, {
             inlineCharacterLimit: Infinity,
           });
 
-          assert({
-            ctx: this,
-            statement: deepEqual(actual[property], expected),
-            actual: actual[property],
-            expected,
-            msg: not =>
+          const pass = deepEqual(actual[property], expected);
+
+          if ((pass && !this.isNot) || (!pass && this.isNot)) {
+            continue;
+          }
+
+          return {
+            pass: deepEqual(actual[property], expected),
+            message: not =>
               'Expected context property' +
               ` "${property}" to ${not}equal ${expectedString}`,
-          });
-        });
+          };
+        }
 
-        return this;
+        // Always pass.
+        return { pass: !this.isNot };
       },
-    ),
-
-    /**
-     * Asserts a component does not have the given context.
-     * @param  {Object} context - A set of key/value pairs it should exclude.
-     * @return {this} - The expectation context.
-     */
-    toNotHaveContext: addEnzymeSupport(
-      original.toNotHaveContext,
-      negate('toHaveContext'),
     ),
 
     /**

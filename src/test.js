@@ -625,7 +625,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toHaveContext()', () => {
+  describe.only('toHaveContext()', () => {
     class Component extends React.Component {
       render() {
         return null;
@@ -639,13 +639,6 @@ describe('expect-enzyme', () => {
 
     const element = shallow(<Component />, {
       context: { data: 'probably' },
-    });
-
-    it('returns the assertion', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveContext({});
-
-      expect(result).toBe(expectation);
     });
 
     it('throws if actual is not an enzyme type', () => {
@@ -672,6 +665,16 @@ describe('expect-enzyme', () => {
       expect(assertion).not.toThrow();
     });
 
+    it('throws when any field is different', () => {
+      const assertion = () =>
+        expect(element).toHaveContext({
+          data: 'probably',
+          yolo: false,
+        });
+
+      expect(assertion).toThrow(/yolo/);
+    });
+
     it('shows the expected object for error messages', () => {
       const assertion = () =>
         expect(element).toHaveContext({
@@ -681,22 +684,9 @@ describe('expect-enzyme', () => {
       expect(assertion).not.toThrow(/object Object/);
       expect(assertion).toThrow(/stringify.*?me/);
     });
-
-    it('shows a diff', () => {
-      const expected = { data: 'different' };
-
-      try {
-        expect(element).toHaveContext(expected);
-        throw new Error('Inadvertantly passed.');
-      } catch (error) {
-        expect(error.message).toNotMatch(/passed/);
-        expect(error.actual).toBe(element.context('data'));
-        expect(error.expected).toBe(expected.data);
-      }
-    });
   });
 
-  describe('toNotHaveContext()', () => {
+  describe.only('not.toHaveContext()', () => {
     class Component extends React.Component {
       render() {
         return null;
@@ -714,7 +704,7 @@ describe('expect-enzyme', () => {
 
     it('passes if the context is not contained', () => {
       const assertion = () =>
-        expect(element).toNotHaveContext({
+        expect(element).not.toHaveContext({
           missing: 'not defined in the context types',
         });
 
@@ -725,24 +715,11 @@ describe('expect-enzyme', () => {
       const { string } = element.context();
 
       const assertion = () =>
-        expect(element).toNotHaveContext({
+        expect(element).not.toHaveContext({
           string,
         });
 
       expect(assertion).toThrow(/context/);
-    });
-
-    it('shows the diff', () => {
-      const expected = { string: element.context('string') };
-
-      try {
-        expect(element).toNotHaveContext(expected);
-        throw new Error('Inadvertantly passed.');
-      } catch (error) {
-        expect(error.message).toNotMatch(/passed/);
-        expect(error.actual).toBe(element.context('string'));
-        expect(error.expected).toBe(expected.string);
-      }
     });
   });
 

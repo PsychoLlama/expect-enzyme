@@ -248,7 +248,7 @@ describe('expect-enzyme', () => {
     });
   });
 
-  describe('toHaveState()', () => {
+  describe.only('toHaveState()', () => {
     // Must be a stateful component.
     class Element extends React.Component {
       constructor() {
@@ -308,27 +308,6 @@ describe('expect-enzyme', () => {
         });
 
       expect(assertion).not.toThrow();
-    });
-
-    it('returns the expectation', () => {
-      const expectation = expect(element);
-      const result = expectation.toHaveState({});
-
-      expect(result).toBe(expectation);
-    });
-
-    it('shows the diff', () => {
-      const expected = { clicks: 10 };
-      element.setState({ clicks: 48 });
-
-      try {
-        expect(element).toHaveState(expected);
-        throw new Error('Should not throw');
-      } catch (error) {
-        expect(error.message).toNotMatch(/should/);
-        expect(error.actual).toEqual(element.state('clicks'));
-        expect(error.expected).toBe(expected.clicks);
-      }
     });
   });
 

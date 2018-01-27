@@ -139,11 +139,11 @@ const addEnzymeSupport = (defaultAssertion, enzymeAssertion) =>
       return defaultAssertion.apply(this, arguments);
     }
 
-    // There's no fallback assertion.
-    assertIsEnzymeWrapper(actual);
-
-    // Chain 'em assertions.
-    return this;
+    // Always fail.
+    return {
+      pass: this.isNot,
+      message: () => `Expected an enzyme wrapper, got ${actual}.`,
+    };
   };
 
 /**
@@ -247,14 +247,6 @@ export default original => {
       element,
       className,
     ) {
-      // Only works for enzyme elements.
-      if (!isEnzymeWrapper(element)) {
-        return {
-          pass: false,
-          message: () => `Expected an enzyme wrapper, got ${element}.`,
-        };
-      }
-
       const not = this.isNot ? 'not ' : '';
 
       return {
@@ -270,35 +262,34 @@ export default original => {
      * @return {this} - The expectation context.
      */
     toHaveState: addEnzymeSupport(original.toHaveState, function(
+      element,
       expectedState,
     ) {
-      const element = this.actual;
-      assertIsEnzymeWrapper(element);
-
       // Make sure the expected state is valid.
-      assert({
-        statement: expectedState instanceof Object,
-        msg:
-          'expect(...).toHaveState expects an object,' +
-          ` was given "${expectedState}"`,
-      });
+      if (!(expectedState instanceof Object)) {
+        return {
+          pass: this.isNot,
+          message: () =>
+            'expect(...).toHaveState expects an object,' +
+            ` was given "${expectedState}"`,
+        };
+      }
 
       // Check every property in the expected state.
-      Object.keys(expectedState).forEach(key => {
+      const key = Object.keys(expectedState).find(key => {
         const actual = element.state(key);
         const expected = expectedState[key];
 
         // Deeply check equivalence.
-        assert({
-          ctx: this,
-          statement: deepEqual(actual, expected),
-          expected,
-          actual,
-          msg: not => `Expected state "${key}" to ${not}equal ${expected}`,
-        });
+        return !deepEqual(actual, expected);
       });
 
-      return this;
+      const not = this.isNot ? 'not ' : '';
+      return {
+        pass: !key,
+        message: () =>
+          `Expected state "${key}" to ${not}equal ${expectedState[key]}`,
+      };
     }),
 
     /**
